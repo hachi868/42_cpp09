@@ -1,1 +1,89 @@
 #include "RPN.hpp"
+
+const std::string RPN::RESET = "\033[0m";
+const std::string RPN::DEBUG = "\033[90m";
+const std::string RPN::STATE = "\033[36m";
+const std::string RPN::ALERT = "\033[31m";
+const std::string RPN::MSG = "\033[34m";
+const std::string RPN::ERROR = "\033[31m";
+
+RPN::RPN() {
+    std::cout << RPN::DEBUG << "[RPN] constructor called (N)" << RPN::RESET << std::endl;
+}
+
+RPN::RPN(const RPN &obj) {
+    (void)obj;
+    std::cout << RPN::DEBUG << "[RPN] copy constructor called" << RPN::RESET << std::endl;
+}
+
+RPN &RPN::operator = (const RPN &obj) {
+    std::cout << RPN::DEBUG << "[RPN] assignation operator called" << RPN::RESET << std::endl;
+    if (this != &obj) {
+//        this->N_ = obj.N_;
+//        this->container_ = obj.container_;
+//        this->isSorted_ = false;
+    }
+    return (*this);
+}
+
+RPN::~RPN() {
+    std::cout << RPN::DEBUG << "[RPN] destructor called" << RPN::RESET << std::endl;
+}
+
+void RPN::parser(std::string expression) {
+    std::stringstream ss(expression);
+    std::string token;
+    while (ss >> token) {
+        if (isDigitPositive(token)) {
+            stack_.push(token[0] - '0');
+        } else if (isDigitNegative(token)) {
+            stack_.push(token[1] - '0' * -1);
+        } else if (isOperator(token)) {
+            std::cout << "isOperator: " << token << std::endl;
+        } else {
+            std::cout << "Error: invalid token." << std::endl;
+            return;
+        }
+    }
+    while (!stack_.empty()) {
+        std::cout << stack_.top() << " ";
+        stack_.pop();
+    }
+//    if (stack_.size() != 1) {
+//        std::cout << "Error" << std::endl;
+//    }
+//    std::cout << stack_.top() << std::endl;
+}
+
+bool RPN::isDigitPositive(std::string token) {
+    if (token.size() == 1 && (token[0] >= '0' && token[0] <= '9')) {
+        return true;
+    }
+    return false;
+}
+
+bool RPN::isDigitNegative(std::string token) {
+    if (token.size() == 2 && token[0] == '-' && (token[1] >= '0' && token[0] <= '1')) {
+        return true;
+    }
+    return false;
+}
+
+bool RPN::isOperator(std::string token) {
+    if (token.size() == 1 && (token[0] == '+' || token[0] == '-' || token[0] == '/' || token[0] == '*')) {
+        return true;
+    }
+    return false;
+}
+
+//int RPN::calcAdd() {
+//}
+//
+//int RPN::calcSubtract() {
+//}
+//
+//int RPN::calcMultiply() {
+//}
+//
+//int RPN::calcDivide() {
+//}

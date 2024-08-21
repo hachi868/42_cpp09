@@ -7,5 +7,11 @@ static void destructor() {
 
 int main(int argc, char **argv)
 {
+    if (argc != 2) {
+        std::cout << "[error]Invalid args." << std::endl;
+        return 1;
+    }
+    RPN calculator;
+    calculator.parser(argv[1]);
 	return 0;
 }
