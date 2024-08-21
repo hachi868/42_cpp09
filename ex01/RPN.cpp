@@ -37,22 +37,22 @@ void RPN::parser(std::string expression) {
         if (isDigitPositive(token)) {
             stack_.push(token[0] - '0');
         } else if (isDigitNegative(token)) {
-            stack_.push(token[1] - '0' * -1);
+            stack_.push((token[1] - '0') * -1);
         } else if (isOperator(token)) {
-            std::cout << "isOperator: " << token << std::endl;
+            runCalc(token[0]);
         } else {
             std::cout << "Error: invalid token." << std::endl;
             return;
         }
     }
-    while (!stack_.empty()) {
-        std::cout << stack_.top() << " ";
-        stack_.pop();
-    }
-//    if (stack_.size() != 1) {
-//        std::cout << "Error" << std::endl;
+//    while (!stack_.empty()) {
+//        std::cout << stack_.top() << " ";
+//        stack_.pop();
 //    }
-//    std::cout << stack_.top() << std::endl;
+    if (stack_.size() != 1) {
+        std::cout << "Error" << std::endl;
+    }
+    std::cout << stack_.top() << std::endl;
 }
 
 bool RPN::isDigitPositive(std::string token) {
@@ -76,14 +76,44 @@ bool RPN::isOperator(std::string token) {
     return false;
 }
 
-//int RPN::calcAdd() {
-//}
-//
-//int RPN::calcSubtract() {
-//}
-//
-//int RPN::calcMultiply() {
-//}
-//
-//int RPN::calcDivide() {
-//}
+void RPN::runCalc(char op) {
+    if (stack_.size() < 2) {
+        std::cout << "Error: cant run calc" << std::endl;
+    }
+    int b = stack_.top();
+    stack_.pop();
+    int a = stack_.top();
+    stack_.pop();
+    if (op == '+') {
+        calcAdd(a, b);
+    } else if (op == '-') {
+        calcSubtract(a, b);
+    } else if (op == '/') {
+        calcMultiply(a, b);
+    } else if (op == '*') {
+        calcDivide(a, b);
+    } else {
+        std::cout << "Error: something wrong with calc" << std::endl;
+        return ;
+    }
+}
+
+void RPN::calcAdd(int a, int b) {
+    stack_.push(a + b);
+}
+
+void RPN::calcSubtract(int a, int b) {
+    stack_.push(a - b);
+}
+
+void RPN::calcMultiply(int a, int b) {
+    if (b == 0) {
+        std::cout << "Error: Division by 0" << std::endl;
+        return ;
+    }
+    stack_.push(a / b);
+}
+
+void RPN::calcDivide(int a, int b) {
+    stack_.push(a * b);
+}

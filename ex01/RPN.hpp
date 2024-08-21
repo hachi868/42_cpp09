@@ -16,6 +16,7 @@ public:
     ~RPN();
 
     void parser(std::string expression);
+    void runCalc(char op);
 
     const static std::string RESET;
     const static std::string DEBUG;
@@ -30,10 +31,10 @@ private:
     bool isDigitPositive(std::string token);
     bool isDigitNegative(std::string token);
     bool isOperator(std::string token);
-//    int calcAdd();
-//    int calcSubtract();
-//    int calcMultiply();
-//    int calcDivide();
+    void calcAdd(int a, int b);
+    void calcSubtract(int a, int b);
+    void calcMultiply(int a, int b);
+    void calcDivide(int a, int b);
 };
 
 
