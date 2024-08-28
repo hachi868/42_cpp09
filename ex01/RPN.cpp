@@ -7,21 +7,18 @@ const std::string RPN::ALERT = "\033[31m";
 const std::string RPN::MSG = "\033[34m";
 const std::string RPN::ERROR = "\033[31m";
 
-RPN::RPN() {
-    std::cout << RPN::DEBUG << "[RPN] constructor called (N)" << RPN::RESET << std::endl;
+RPN::RPN() : stack_() {
+    std::cout << RPN::DEBUG << "[RPN] constructor called" << RPN::RESET << std::endl;
 }
 
-RPN::RPN(const RPN &obj) {
-    (void)obj;
+RPN::RPN(const RPN &obj) : stack_(obj.stack_) {
     std::cout << RPN::DEBUG << "[RPN] copy constructor called" << RPN::RESET << std::endl;
 }
 
 RPN &RPN::operator = (const RPN &obj) {
     std::cout << RPN::DEBUG << "[RPN] assignation operator called" << RPN::RESET << std::endl;
     if (this != &obj) {
-//        this->N_ = obj.N_;
-//        this->container_ = obj.container_;
-//        this->isSorted_ = false;
+        this->stack_ = obj.stack_;
     }
     return (*this);
 }

@@ -2,8 +2,8 @@
 #define RPN_HPP
 
 //#include <algorithm>
-#include<stdio.h>
-#include<ctype.h>
+#include <stdio.h>
+#include <ctype.h>
 #include <iostream>
 #include <sstream>
 #include <stack>

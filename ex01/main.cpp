@@ -11,7 +11,7 @@ int main(int argc, char **argv)
         std::cout << "[error]Invalid args." << std::endl;
         return 1;
     }
-    RPN calculator;
-    calculator.parser(argv[1]);
+    RPN rpn = RPN();
+    rpn.parser(argv[1]);
 	return 0;
 }
