@@ -45,6 +45,52 @@ const char* BitcoinExchange::ParseException::what() const throw()
     return ("Invalid data format for exchange rate");
 }
 
+//parseCsvToMap
+bool isValidFirstLine(std::string date, std::string rateStr) {
+    std::cout << date << ":" << rateStr << ":" << std::endl;
+    if (date == "date" && rateStr == "exchange_rate") {
+        return true;
+    }
+    return false;
+}
+
+bool isValidDate(std::string date) {
+    if (date.size() != 10) {
+        return false;
+    }
+
+    for (size_t i = 0; i < date.size(); ++i) {
+        if (i == 4 || i == 7) {
+            if (date[i] != '-') {
+                return false;
+            }
+        } else {
+            if (!std::isdigit(date[i])) {
+                return false;
+            }
+        }
+    }
+
+    int year, month, day;
+    char hyphen1, hyphen2;
+    std::istringstream dateStream(date);
+    dateStream >> year >> hyphen1 >> month >> hyphen2 >> day;
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+    return true;
+}
+
+bool isValidRate(std::string rateStr) {
+    //stodが使えないのでstd::stringstreamで数値変換可能かチェックする
+    std::istringstream rateStream(rateStr);
+    double exchangeRate;
+    if (!(rateStream >> exchangeRate) || !rateStream.eof()) {
+        return false;
+    }
+    return true;
+}
+
 std::map<std::string, double> parseCsvToMap(const std::string& csvData) {
     std::map<std::string, double> map;
     std::ifstream file(csvData);
@@ -56,22 +102,30 @@ std::map<std::string, double> parseCsvToMap(const std::string& csvData) {
 
     // 各行を読み込む
     while (std::getline(file, line)) {
-        if (isFirstLine) {
-            isFirstLine = false;
-            continue;  // ヘッダー行スキップ
-        }
-
         std::istringstream lineStream(line);
         std::string date;
         std::string rateStr;
         if (std::getline(lineStream, date, ',') && std::getline(lineStream, rateStr)) {
+            //todo: 空白trim
             try {
-                std::istringstream rateStream(rateStr);
-                double exchangeRate;
-                //stodが使えないのでstd::stringstreamで数値変換可能かチェックする
-                if (!(rateStream >> exchangeRate) || !rateStream.eof()) {
+                if (isFirstLine) {
+                    if (isValidFirstLine(date, rateStr)) {
+                        isFirstLine = false;
+                        continue;  // ヘッダー行スキップ
+                    } else {
+                        throw BitcoinExchange::ParseException();
+                    }
+                }
+                if (!isValidDate(date)) {
                     throw BitcoinExchange::ParseException();
                 }
+                if (!isValidRate(rateStr)) {
+                    throw BitcoinExchange::ParseException();
+                }
+                //1行目、date,exchange_rate 全て問題なければ格納
+                std::istringstream rateStream(rateStr);
+                double exchangeRate;
+                rateStream >> exchangeRate;
                 map[date] = exchangeRate;
             } catch (const BitcoinExchange::ParseException& e) {
                 throw std::runtime_error("Error: Could not parse exchangeRate");
