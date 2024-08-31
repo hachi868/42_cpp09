@@ -46,6 +46,19 @@ const char* BitcoinExchange::ParseException::what() const throw()
 }
 
 //parseCsvToMap
+std::string trim(std::string& str) {
+    int start = 0;
+    int end = str.size() - 1;
+
+    while (start <= end && std::isspace(static_cast<unsigned char>(str[start]))) {
+        ++start;
+    }
+    while (end >= start && std::isspace(static_cast<unsigned char>(str[end]))) {
+        --end;
+    }
+    return str.substr(start, end - start + 1);
+}
+
 bool isValidFirstLine(std::string date, std::string rateStr) {
     std::cout << date << ":" << rateStr << ":" << std::endl;
     if (date == "date" && rateStr == "exchange_rate") {
@@ -98,7 +111,7 @@ std::map<std::string, double> parseCsvToMap(const std::string& csvData) {
         throw std::runtime_error("Could not open database file.");
     }
     std::string line;
-    bool isFirstLine = true;  // ヘッダー行スキップ
+    bool isFirstLine = true;
 
     // 各行を読み込む
     while (std::getline(file, line)) {
@@ -106,12 +119,14 @@ std::map<std::string, double> parseCsvToMap(const std::string& csvData) {
         std::string date;
         std::string rateStr;
         if (std::getline(lineStream, date, ',') && std::getline(lineStream, rateStr)) {
-            //todo: 空白trim
+            //trim space
+            date = trim(date);
+            rateStr = trim(rateStr);
             try {
                 if (isFirstLine) {
                     if (isValidFirstLine(date, rateStr)) {
                         isFirstLine = false;
-                        continue;  // ヘッダー行スキップ
+                        continue;
                     } else {
                         throw BitcoinExchange::ParseException();
                     }
