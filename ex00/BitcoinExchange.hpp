@@ -10,12 +10,13 @@
 
 class BitcoinExchange {
 public:
-    BitcoinExchange(const std::string& csvData);
+    BitcoinExchange(const std::string &csvData);
     BitcoinExchange(const BitcoinExchange &obj);
     BitcoinExchange &operator = (const BitcoinExchange &obj);
     ~BitcoinExchange();
 
-    void putValue(std::string date);
+    void putValue(std::string &date, double &exchangeRateDouble);
+    void putValue(std::string &date, unsigned int &exchangeRateInt);
 
     std::map<std::string, double> dataRate_;
 
@@ -25,6 +26,12 @@ public:
     const static std::string ALERT;
     const static std::string MSG;
     const static std::string ERROR;
+
+    //static std::string trim(std::string &str);
+    static bool isValidFirstLine(const std::string &date, const std::string &rateStr, const std::string &dateHead, const std::string &rateStrHead);
+    static bool split_line(std::istringstream &lineStream, char dlm, std::string &date, std::string &rateStr);
+    static bool isValidDate(std::string date);
+    static bool isValidRate(std::string rateStr);
 
     //throw
     class ParseException : public std::exception {
@@ -41,7 +48,7 @@ private:
     BitcoinExchange();
 };
 
-std::map<std::string, double> parseCsvToMap(const std::string& csvData);
+std::map<std::string, double> parseCsvToMap(const std::string &csvData);
 
 
 #endif //BITCOIN_EXCHANGE_HPP

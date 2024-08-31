@@ -7,7 +7,7 @@ const std::string BitcoinExchange::ALERT = "\033[31m";
 const std::string BitcoinExchange::MSG = "\033[34m";
 const std::string BitcoinExchange::ERROR = "\033[31m";
 
-BitcoinExchange::BitcoinExchange(const std::string& csvData) : dataRate_() {
+BitcoinExchange::BitcoinExchange(const std::string &csvData) : dataRate_() {
     std::cout << BitcoinExchange::DEBUG << "[BitcoinExchange] constructor called" << BitcoinExchange::RESET << std::endl;
     try {
         dataRate_ = parseCsvToMap(csvData);
@@ -36,8 +36,26 @@ BitcoinExchange::~BitcoinExchange() {
     std::cout << BitcoinExchange::DEBUG << "[BitcoinExchange] destructor called" << BitcoinExchange::RESET << std::endl;
 }
 
-void BitcoinExchange::putValue(std::string date) {
-    std::cout << "date: " << date << std::endl;
+void BitcoinExchange::putValue(std::string &date, double &exchangeRateDouble) {
+    std::map<std::string, double>::iterator it = dataRate_.begin();
+
+    // 与えられた日付より小さいキーがある間はループ
+    while (it != dataRate_.end() && it->first < date) {
+        //std::cout << "Processing date: " << it->first << ", rate: " << it->second << std::endl;
+        ++it; // 次の要素へ移動
+    }
+    std::cout << "date: " << it->first << "/" << exchangeRateDouble << std::endl;
+}
+
+void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt) {
+    std::map<std::string, double>::iterator it = dataRate_.begin();
+
+    // 与えられた日付より小さいキーがある間はループ
+    while (it != dataRate_.end() && it->first < date) {
+        //std::cout << "Processing date: " << it->first << ", rate: " << it->second << std::endl;
+        ++it; // 次の要素へ移動
+    }
+    std::cout << "date: " << it->first << "/" << exchangeRateInt << std::endl;
 }
 
 const char* BitcoinExchange::ParseException::what() const throw()
@@ -46,7 +64,7 @@ const char* BitcoinExchange::ParseException::what() const throw()
 }
 
 //parseCsvToMap
-std::string trim(std::string& str) {
+std::string trim(std::string &str) {
     int start = 0;
     int end = str.size() - 1;
 
@@ -59,19 +77,17 @@ std::string trim(std::string& str) {
     return str.substr(start, end - start + 1);
 }
 
-bool isValidFirstLine(std::string date, std::string rateStr) {
-    std::cout << date << ":" << rateStr << ":" << std::endl;
-    if (date == "date" && rateStr == "exchange_rate") {
+bool BitcoinExchange::isValidFirstLine(const std::string &date, const std::string &rateStr, const std::string &dateHead, const std::string &rateStrHead) {
+    if (date == dateHead && rateStr == rateStrHead) {
         return true;
     }
     return false;
 }
 
-bool isValidDate(std::string date) {
+bool BitcoinExchange::isValidDate(std::string date) {
     if (date.size() != 10) {
         return false;
     }
-
     for (size_t i = 0; i < date.size(); ++i) {
         if (i == 4 || i == 7) {
             if (date[i] != '-') {
@@ -94,7 +110,7 @@ bool isValidDate(std::string date) {
     return true;
 }
 
-bool isValidRate(std::string rateStr) {
+bool BitcoinExchange::isValidRate(std::string rateStr) {
     //stodが使えないのでstd::stringstreamで数値変換可能かチェックする
     std::istringstream rateStream(rateStr);
     double exchangeRate;
@@ -104,51 +120,68 @@ bool isValidRate(std::string rateStr) {
     return true;
 }
 
-std::map<std::string, double> parseCsvToMap(const std::string& csvData) {
+bool BitcoinExchange::split_line(std::istringstream &lineStream, char dlm, std::string &date, std::string &rateStr) {
+//    try {
+//
+//    } catch (const BitcoinExchange::ParseException& e) {
+//        throw std::runtime_error("Error: Could not parse exchangeRate");
+//    } catch (const std::exception& e) {
+//        throw std::runtime_error("Error: Could not init map");
+//    }
+    std::getline(lineStream, date, dlm);
+    std::getline(lineStream, rateStr);
+    //trim space
+    date = trim(date);
+    rateStr = trim(rateStr);
+    if (date.size() == 0 || rateStr.size() == 0) {
+        return false;
+    }
+    return true;
+}
+
+std::map<std::string, double> parseCsvToMap(const std::string &csvData) {
     std::map<std::string, double> map;
     std::ifstream file(csvData);
     if (!file.is_open()) {
         throw std::runtime_error("Could not open database file.");
     }
+
+    // read line
     std::string line;
     bool isFirstLine = true;
+    std::string date;
+    std::string rateStr;
 
     // 各行を読み込む
     while (std::getline(file, line)) {
-        std::istringstream lineStream(line);
-        std::string date;
-        std::string rateStr;
-        if (std::getline(lineStream, date, ',') && std::getline(lineStream, rateStr)) {
-            //trim space
-            date = trim(date);
-            rateStr = trim(rateStr);
-            try {
-                if (isFirstLine) {
-                    if (isValidFirstLine(date, rateStr)) {
-                        isFirstLine = false;
-                        continue;
-                    } else {
-                        throw BitcoinExchange::ParseException();
-                    }
-                }
-                if (!isValidDate(date)) {
-                    throw BitcoinExchange::ParseException();
-                }
-                if (!isValidRate(rateStr)) {
-                    throw BitcoinExchange::ParseException();
-                }
-                //1行目、date,exchange_rate 全て問題なければ格納
-                std::istringstream rateStream(rateStr);
-                double exchangeRate;
-                rateStream >> exchangeRate;
-                map[date] = exchangeRate;
-            } catch (const BitcoinExchange::ParseException& e) {
-                throw std::runtime_error("Error: Could not parse exchangeRate");
-            } catch (const std::exception& e) {
-                throw std::runtime_error("Error: Could not init map");
+        try {
+            std::istringstream lineStream(line);
+            if (!BitcoinExchange::split_line(lineStream, ',', date, rateStr)) {
+                throw BitcoinExchange::ParseException();
             }
-        } else {
-            throw std::runtime_error("Error: invalid line format in CSV file.");
+            if (isFirstLine) {
+                if (BitcoinExchange::isValidFirstLine(date, rateStr, "date", "exchange_rate")) {
+                    isFirstLine = false;
+                    continue;
+                } else {
+                    throw BitcoinExchange::ParseException();
+                }
+            }
+            if (!BitcoinExchange::isValidDate(date)) {
+                throw BitcoinExchange::ParseException();
+            }
+            if (!BitcoinExchange::isValidRate(rateStr)) {
+                throw BitcoinExchange::ParseException();
+            }
+            //1行目、date,exchange_rate 全て問題なければ格納
+            std::istringstream rateStream(rateStr);
+            double exchangeRate;
+            rateStream >> exchangeRate;
+            map[date] = exchangeRate;
+        } catch (const BitcoinExchange::ParseException& e) {
+            throw BitcoinExchange::ParseException();
+        } catch (const std::exception& e) {
+            throw std::runtime_error("Error: Could not init map");
         }
     }
     return (map);
