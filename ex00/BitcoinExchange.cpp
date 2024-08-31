@@ -11,7 +11,7 @@ BitcoinExchange::BitcoinExchange(const std::string &csvData) : dataRate_() {
     std::cout << BitcoinExchange::DEBUG << "[BitcoinExchange] constructor called" << BitcoinExchange::RESET << std::endl;
     try {
         dataRate_ = parseCsvToMap(csvData);
-    } catch (const BitcoinExchange::ParseException& e) {
+    } catch (const BitcoinExchange::ParseExceptionDb& e) {
         throw;
     } catch (const std::exception& e) {
         throw;
@@ -58,9 +58,14 @@ void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt)
     std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << "///" << it->first << ":" << it->second << std::endl;
 }
 
-const char* BitcoinExchange::ParseException::what() const throw()
+const char* BitcoinExchange::ParseExceptionDb::what() const throw()
 {
-    return ("Invalid data format(csv)");
+    return ("Invalid data format(dataBase)");
+}
+
+const char* BitcoinExchange::ParseExceptionInput::what() const throw()
+{
+    return ("Invalid data format(input)");
 }
 
 //parseCsvToMap
@@ -150,28 +155,28 @@ std::map<std::string, double> parseCsvToMap(const std::string &csvData) {
         try {
             std::istringstream lineStream(line);
             if (!BitcoinExchange::split_line(lineStream, ',', date, rateStr)) {
-                throw BitcoinExchange::ParseException();
+                throw BitcoinExchange::ParseExceptionDb();
             }
             if (isFirstLine) {
                 if (BitcoinExchange::isValidFirstLine(date, rateStr, "date", "exchange_rate")) {
                     isFirstLine = false;
                     continue;
                 } else {
-                    throw BitcoinExchange::ParseException();
+                    throw BitcoinExchange::ParseExceptionDb();
                 }
             }
             if (!BitcoinExchange::isValidDate(date)) {
-                throw BitcoinExchange::ParseException();
+                throw BitcoinExchange::ParseExceptionDb();
             }
             if (!BitcoinExchange::isValidRate(rateStr)) {
-                throw BitcoinExchange::ParseException();
+                throw BitcoinExchange::ParseExceptionDb();
             }
             //1行目、date,exchange_rate 全て問題なければ格納
             std::istringstream rateStream(rateStr);
             double exchangeRate;
             rateStream >> exchangeRate;
             map[date] = exchangeRate;
-        } catch (const BitcoinExchange::ParseException& e) {
+        } catch (const BitcoinExchange::ParseExceptionDb& e) {
             throw;
         } catch (const std::exception& e) {
             throw;

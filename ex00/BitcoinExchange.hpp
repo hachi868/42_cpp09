@@ -34,7 +34,12 @@ public:
     static bool isValidRate(std::string rateStr);
 
     //throw
-    class ParseException : public std::exception {
+    class ParseExceptionDb : public std::exception {
+    public:
+        virtual const char* what() const throw();
+    };
+
+    class ParseExceptionInput : public std::exception {
     public:
         virtual const char* what() const throw();
     };

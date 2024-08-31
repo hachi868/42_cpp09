@@ -22,8 +22,7 @@ int main(int argc, char **argv)
         // open
         std::ifstream file(argv[1]);
         if (!file.is_open()) {
-            std::cerr << BitcoinExchange::ERROR << "[error]could not open file." << BitcoinExchange::RESET << std::endl;
-            return 1;
+            throw std::runtime_error("could not open input file.");
         }
 
         // read line
@@ -44,7 +43,7 @@ int main(int argc, char **argv)
                         isFirstLine = false;
                         continue;
                     } else {
-                        throw BitcoinExchange::ParseException();
+                        throw BitcoinExchange::ParseExceptionInput();
                     }
                 }
                 if (!BitcoinExchange::isValidDate(date)) {
@@ -82,7 +81,7 @@ int main(int argc, char **argv)
                     }
                     btcEx.putValue(date, exchangeRateInt);
                 }
-            } catch (const BitcoinExchange::ParseException& e) {
+            } catch (const BitcoinExchange::ParseExceptionInput& e) {
                 std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
             } catch (const std::exception& e) {
                 std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
@@ -90,7 +89,7 @@ int main(int argc, char **argv)
         }
         // close
         file.close();
-    } catch (const BitcoinExchange::ParseException& e) {
+    } catch (const BitcoinExchange::ParseExceptionDb& e) {
         std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
         return 1;
     } catch (const std::exception& e) {
