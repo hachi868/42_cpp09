@@ -36,26 +36,27 @@ BitcoinExchange::~BitcoinExchange() {
     std::cout << BitcoinExchange::DEBUG << "[BitcoinExchange] destructor called" << BitcoinExchange::RESET << std::endl;
 }
 
-void BitcoinExchange::putValue(std::string &date, double &exchangeRateDouble) {
+std::map<std::string, double>::iterator BitcoinExchange::getRefData(const std::string &date) {
     std::map<std::string, double>::iterator it = dataRate_.begin();
-
-    // 与えられた日付より小さいキーがある間はループ
-    while (it != dataRate_.end() && it->first < date) {
-        //std::cout << "Processing date: " << it->first << ", rate: " << it->second << std::endl;
-        ++it; // 次の要素へ移動
+    while (it != dataRate_.end() && it->first <= date) {
+        it++;
     }
-    std::cout << "date: " << it->first << "/" << exchangeRateDouble << std::endl;
+    if (it == dataRate_.begin()) {
+        throw std::runtime_error("No valid rate found for date: " + date);
+    } else {
+        --it;
+    }
+    return it;
+}
+
+void BitcoinExchange::putValue(std::string &date, double &exchangeRateDouble) {
+    std::map<std::string, double>::iterator it = getRefData(date);
+    std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << "///" << date << ":" << exchangeRateDouble << std::endl;
 }
 
 void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt) {
-    std::map<std::string, double>::iterator it = dataRate_.begin();
-
-    // 与えられた日付より小さいキーがある間はループ
-    while (it != dataRate_.end() && it->first < date) {
-        //std::cout << "Processing date: " << it->first << ", rate: " << it->second << std::endl;
-        ++it; // 次の要素へ移動
-    }
-    std::cout << "date: " << it->first << "/" << exchangeRateInt << std::endl;
+    std::map<std::string, double>::iterator it = getRefData(date);
+    std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << "///" << it->first << ":" << it->second << std::endl;
 }
 
 const char* BitcoinExchange::ParseException::what() const throw()
@@ -121,13 +122,6 @@ bool BitcoinExchange::isValidRate(std::string rateStr) {
 }
 
 bool BitcoinExchange::split_line(std::istringstream &lineStream, char dlm, std::string &date, std::string &rateStr) {
-//    try {
-//
-//    } catch (const BitcoinExchange::ParseException& e) {
-//        throw std::runtime_error("Error: Could not parse exchangeRate");
-//    } catch (const std::exception& e) {
-//        throw std::runtime_error("Error: Could not init map");
-//    }
     std::getline(lineStream, date, dlm);
     std::getline(lineStream, rateStr);
     //trim space

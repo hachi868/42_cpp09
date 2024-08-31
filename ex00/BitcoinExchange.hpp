@@ -38,14 +38,9 @@ public:
     public:
         virtual const char* what() const throw();
     };
-
-//    class ParseException : public std::runtime_error {
-//    public:
-//        explicit ParseException(const std::string& message)
-//                : std::runtime_error(message) {}
-//    };
 private:
     BitcoinExchange();
+    std::map<std::string, double>::iterator getRefData(const std::string &date);
 };
 
 std::map<std::string, double> parseCsvToMap(const std::string &csvData);
