@@ -13,8 +13,11 @@ int main(int argc, char **argv)
     }
     try {
         BitcoinExchange btcEx = BitcoinExchange("./data/data.csv");
+        //BitcoinExchange btcEx = BitcoinExchange("./data/data2.csv");
+        //BitcoinExchange btcEx = BitcoinExchange("./data/data_empty.csv");
+        //BitcoinExchange btcEx = BitcoinExchange("./data/data42.csv");
         if (btcEx.dataRate_.empty()) {
-            throw std::runtime_error("Error: dataRate_ is empty.");
+            throw std::runtime_error("dataRate_ is empty.");
         }
         // open
         std::ifstream file(argv[1]);
@@ -48,10 +51,6 @@ int main(int argc, char **argv)
                     std::cerr << BitcoinExchange::ERROR << "[error]Invalid Date: " << date << BitcoinExchange::RESET << std::endl;
                     continue;
                 }
-//                if (!BitcoinExchange::isValidRate(rateStr)) {
-//                    std::cerr << "[error]Invalid Rate: " << rateStr << std::endl;
-//                    continue;
-//                }
                 //rate
                 if (rateStr[0] == '-') {
                     std::cerr << BitcoinExchange::ERROR << "[error]not a positive number: " << rateStr << BitcoinExchange::RESET << std::endl;
@@ -84,18 +83,18 @@ int main(int argc, char **argv)
                     btcEx.putValue(date, exchangeRateInt);
                 }
             } catch (const BitcoinExchange::ParseException& e) {
-                throw BitcoinExchange::ParseException();
+                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
             } catch (const std::exception& e) {
-                throw std::runtime_error("Error: Could not print");
+                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
             }
         }
         // close
         file.close();
     } catch (const BitcoinExchange::ParseException& e) {
-        std::cerr << BitcoinExchange::ERROR << "ParseException caught: " << e.what() << BitcoinExchange::RESET << std::endl;
+        std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
         return 1;
     } catch (const std::exception& e) {
-        std::cerr << BitcoinExchange::ERROR << e.what() << BitcoinExchange::RESET << std::endl;
+        std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
         return 1;
     }
     return 0;

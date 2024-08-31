@@ -12,10 +12,8 @@ BitcoinExchange::BitcoinExchange(const std::string &csvData) : dataRate_() {
     try {
         dataRate_ = parseCsvToMap(csvData);
     } catch (const BitcoinExchange::ParseException& e) {
-        //std::cerr << "ParseException caught: " << e.what() << std::endl;
         throw;
     } catch (const std::exception& e) {
-        //std::cerr << "[Error] " << e.what() << std::endl;
         throw;
     }
 }
@@ -39,6 +37,7 @@ BitcoinExchange::~BitcoinExchange() {
 std::map<std::string, double>::iterator BitcoinExchange::getRefData(const std::string &date) {
     std::map<std::string, double>::iterator it = dataRate_.begin();
     while (it != dataRate_.end() && it->first <= date) {
+        std::cout << it->first << " => " << it->second << std::endl;
         it++;
     }
     if (it == dataRate_.begin()) {
@@ -61,7 +60,7 @@ void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt)
 
 const char* BitcoinExchange::ParseException::what() const throw()
 {
-    return ("Invalid data format for exchange rate");
+    return ("Invalid data format(csv)");
 }
 
 //parseCsvToMap
@@ -173,9 +172,9 @@ std::map<std::string, double> parseCsvToMap(const std::string &csvData) {
             rateStream >> exchangeRate;
             map[date] = exchangeRate;
         } catch (const BitcoinExchange::ParseException& e) {
-            throw BitcoinExchange::ParseException();
+            throw;
         } catch (const std::exception& e) {
-            throw std::runtime_error("Error: Could not init map");
+            throw;
         }
     }
     return (map);
