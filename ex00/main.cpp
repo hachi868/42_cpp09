@@ -5,6 +5,17 @@ static void destructor() {
 	system("leaks -q btc");
 }
 
+//subject
+// ./btc ./data/input.txt
+//Invalid firstLine
+// ./btc ./data/input2.txt
+//Invalid firstLine
+// ./btc ./data/input3.txt
+//empty
+// ./btc ./data/input_empty.txt
+//404
+// ./btc ./data/input_404.txt
+
 int main(int argc, char **argv)
 {
     if (argc != 2) {
@@ -13,16 +24,19 @@ int main(int argc, char **argv)
     }
     try {
         BitcoinExchange btcEx = BitcoinExchange("./data/data.csv");
+        //Invalid firstLine
         //BitcoinExchange btcEx = BitcoinExchange("./data/data2.csv");
+        //empty
         //BitcoinExchange btcEx = BitcoinExchange("./data/data_empty.csv");
-        //BitcoinExchange btcEx = BitcoinExchange("./data/data42.csv");
+        //404
+        //BitcoinExchange btcEx = BitcoinExchange("./data/data404.csv");
         if (btcEx.dataRate_.empty()) {
             throw std::runtime_error("dataRate_ is empty.");
         }
         // open
         std::ifstream file(argv[1]);
         if (!file.is_open()) {
-            throw std::runtime_error("could not open input file.");
+            throw std::runtime_error("Could not open input file.");
         }
 
         // read line
@@ -81,10 +95,14 @@ int main(int argc, char **argv)
                     }
                     btcEx.putValue(date, exchangeRateInt);
                 }
+            } catch (const BitcoinExchange::InvalidPastDateException& e) {
+                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
             } catch (const BitcoinExchange::ParseExceptionInput& e) {
                 std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+                break;
             } catch (const std::exception& e) {
                 std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+                break;
             }
         }
         // close

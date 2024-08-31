@@ -37,11 +37,11 @@ BitcoinExchange::~BitcoinExchange() {
 std::map<std::string, double>::iterator BitcoinExchange::getRefData(const std::string &date) {
     std::map<std::string, double>::iterator it = dataRate_.begin();
     while (it != dataRate_.end() && it->first <= date) {
-        std::cout << it->first << " => " << it->second << std::endl;
+        //std::cout << it->first << " => " << it->second << std::endl;
         it++;
     }
     if (it == dataRate_.begin()) {
-        throw std::runtime_error("No valid rate found for date: " + date);
+        throw BitcoinExchange::InvalidPastDateException();
     } else {
         --it;
     }
@@ -50,12 +50,14 @@ std::map<std::string, double>::iterator BitcoinExchange::getRefData(const std::s
 
 void BitcoinExchange::putValue(std::string &date, double &exchangeRateDouble) {
     std::map<std::string, double>::iterator it = getRefData(date);
-    std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << "///" << date << ":" << exchangeRateDouble << std::endl;
+    //std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << "///" << date << ":" << exchangeRateDouble << std::endl;
+    std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << std::endl;
 }
 
 void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt) {
     std::map<std::string, double>::iterator it = getRefData(date);
-    std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << "///" << it->first << ":" << it->second << std::endl;
+    //std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << "///" << it->first << ":" << it->second << std::endl;
+    std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << std::endl;
 }
 
 const char* BitcoinExchange::ParseExceptionDb::what() const throw()
@@ -66,6 +68,11 @@ const char* BitcoinExchange::ParseExceptionDb::what() const throw()
 const char* BitcoinExchange::ParseExceptionInput::what() const throw()
 {
     return ("Invalid data format(input)");
+}
+
+const char* BitcoinExchange::InvalidPastDateException::what() const throw()
+{
+    return ("Input date is too far in the past.");
 }
 
 //parseCsvToMap

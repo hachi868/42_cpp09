@@ -43,6 +43,11 @@ public:
     public:
         virtual const char* what() const throw();
     };
+
+    class InvalidPastDateException : public std::exception {
+    public:
+        virtual const char* what() const throw();
+    };
 private:
     BitcoinExchange();
     std::map<std::string, double>::iterator getRefData(const std::string &date);
