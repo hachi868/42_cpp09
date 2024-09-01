@@ -38,12 +38,11 @@ void RPN::parser(std::string expression) {
         } else if (isOperator(token)) {
             runCalc(token[0]);
         } else {
-            std::cout << "Error: invalid token." << std::endl;
-            return;
+            throw std::runtime_error("Invalid token.");
         }
     }
     if (stack_.size() != 1) {
-        std::cout << "Error" << std::endl;
+        throw std::runtime_error("Invalid token.");
     }
     std::cout << stack_.top() << std::endl;
 }
@@ -77,16 +76,17 @@ void RPN::runCalc(char op) {
     stack_.pop();
     int a = stack_.top();
     stack_.pop();
+    //std::cout << a << "/" << b << "/" << op << std::endl;
     if (op == '+') {
         calcAdd(a, b);
     } else if (op == '-') {
         calcSubtract(a, b);
     } else if (op == '/') {
-        calcMultiply(a, b);
-    } else if (op == '*') {
         calcDivide(a, b);
+    } else if (op == '*') {
+        calcMultiply(a, b);
     } else {
-        throw std::runtime_error("Invalid operator in calculation");
+        throw std::runtime_error("Invalid token.");
     }
 }
 
@@ -107,19 +107,20 @@ void RPN::calcSubtract(int a, int b) {
 }
 
 void RPN::calcMultiply(int a, int b) {
+    if (b != 0 &&
+        ((a > 0 && b > 0 && static_cast<double>(a) > static_cast<double>(std::numeric_limits<int>::max()) / b) ||
+        (a < 0 && b < 0 && static_cast<double>(a) < static_cast<double>(std::numeric_limits<int>::max()) / b) ||
+        (a < 0 && b > 0 && static_cast<double>(a) < static_cast<double>(std::numeric_limits<int>::min()) / b) ||
+        (a > 0 && b < 0 && static_cast<double>(a) > static_cast<double>(std::numeric_limits<int>::min()) / b))
+       ) {
+        throw std::overflow_error("Multiplication overflow");
+    }
+    stack_.push(a * b);
+}
+
+void RPN::calcDivide(int a, int b) {
     if (b == 0) {
         throw std::domain_error("Division by 0");
     }
     stack_.push(a / b);
-}
-
-void RPN::calcDivide(int a, int b) {
-    if (a != 0 && b != 0 &&
-        ((b > 0 && a > std::numeric_limits<int>::max() / b) ||
-         (b < 0 && a < std::numeric_limits<int>::min() / b) ||
-         (b < 0 && a > std::numeric_limits<int>::max() / b) ||
-         (b > 0 && a < std::numeric_limits<int>::min() / b))) {
-        throw std::overflow_error("Multiplication overflow");
-    }
-    stack_.push(a * b);
 }
