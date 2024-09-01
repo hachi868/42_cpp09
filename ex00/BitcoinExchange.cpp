@@ -123,6 +123,9 @@ bool BitcoinExchange::isValidDate(std::string date) {
 }
 
 bool BitcoinExchange::isValidRate(std::string rateStr) {
+    if (rateStr[0] == '-') {
+        return false;
+    }
     //stodが使えないのでstd::stringstreamで数値変換可能かチェックする
     std::istringstream rateStream(rateStr);
     double exchangeRate;
