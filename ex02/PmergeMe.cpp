@@ -29,7 +29,32 @@ PmergeMe::~PmergeMe() {
 }
 
 void PmergeMe::parser(std::string arg) {
-    std::cout << arg << " ";
+    if (arg[0] == '-') {
+        throw std::runtime_error("Invalid args. (negative number)");
+    }
+    std::stringstream argStream(arg);
+    unsigned int uIntArg;
+    if (!(argStream >> uIntArg) || !argStream.eof()) {
+        throw std::runtime_error("Invalid args. (cannot convert unsigned int)");
+    }
+    cont_vec_.push_back(uIntArg);
+    cont_deque_.push_back(uIntArg);
+}
+
+void PmergeMe::printContainers(std::string prefix) const {
+    //オーバーヘッド的に軽量と思われるvectorを使用
+    std::cout << prefix << ": ";
+    for (std::vector<unsigned int>::const_iterator it = cont_vec_.begin(); it != cont_vec_.end(); ++it) {
+        std::cout << *it << " ";
+    }
+    std::cout << std::endl;
+}
+
+bool PmergeMe::isContainersEqual() const {
+    if (cont_vec_.size() != cont_deque_.size()) {
+        return false;
+    }
+    return std::equal(cont_vec_.begin(), cont_vec_.end(), cont_deque_.begin());
 }
 
 void PmergeMe::runSort() {

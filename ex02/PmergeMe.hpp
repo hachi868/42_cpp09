@@ -2,6 +2,7 @@
 #define P_MERGE_ME_HPP
 
 #include <iostream>
+#include <sstream>
 //#include <algorithm>
 #include <vector>
 #include <deque>
@@ -14,6 +15,8 @@ public:
     ~PmergeMe();
 
     void parser(std::string arg);
+    void printContainers(std::string prefix) const;
+    bool isContainersEqual() const;
     void runSort();
 
     const static std::string RESET;
