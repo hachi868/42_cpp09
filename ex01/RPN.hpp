@@ -16,7 +16,6 @@ public:
     ~RPN();
 
     void parser(std::string expression);
-    void runCalc(char op);
 
     const static std::string RESET;
     const static std::string DEBUG;
@@ -24,10 +23,10 @@ public:
     const static std::string ALERT;
     const static std::string MSG;
     const static std::string ERROR;
-
 private:
     std::stack<int> stack_;
 
+    void runCalc(char op);
     bool isDigitPositive(std::string token);
     bool isDigitNegative(std::string token);
     bool isOperator(std::string token);
@@ -36,6 +35,5 @@ private:
     void calcMultiply(int a, int b);
     void calcDivide(int a, int b);
 };
-
 
 #endif //RPN_HPP

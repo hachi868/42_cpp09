@@ -42,10 +42,6 @@ void RPN::parser(std::string expression) {
             return;
         }
     }
-//    while (!stack_.empty()) {
-//        std::cout << stack_.top() << " ";
-//        stack_.pop();
-//    }
     if (stack_.size() != 1) {
         std::cout << "Error" << std::endl;
     }
@@ -75,7 +71,7 @@ bool RPN::isOperator(std::string token) {
 
 void RPN::runCalc(char op) {
     if (stack_.size() < 2) {
-        std::cout << "Error: cant run calc" << std::endl;
+        throw std::runtime_error("Cant run calc");
     }
     int b = stack_.top();
     stack_.pop();
@@ -90,27 +86,40 @@ void RPN::runCalc(char op) {
     } else if (op == '*') {
         calcDivide(a, b);
     } else {
-        std::cout << "Error: something wrong with calc" << std::endl;
-        return ;
+        throw std::runtime_error("Invalid operator in calculation");
     }
 }
 
 void RPN::calcAdd(int a, int b) {
+    if ((b > 0 && a > std::numeric_limits<int>::max() - b) ||
+        (b < 0 && a < std::numeric_limits<int>::min() - b)) {
+        throw std::overflow_error("Addition overflow");
+    }
     stack_.push(a + b);
 }
 
 void RPN::calcSubtract(int a, int b) {
+    if ((b > 0 && a < std::numeric_limits<int>::min() + b) ||
+        (b < 0 && a > std::numeric_limits<int>::max() + b)) {
+        throw std::overflow_error("Subtraction overflow");
+    }
     stack_.push(a - b);
 }
 
 void RPN::calcMultiply(int a, int b) {
     if (b == 0) {
-        std::cout << "Error: Division by 0" << std::endl;
-        return ;
+        throw std::domain_error("Division by 0");
     }
     stack_.push(a / b);
 }
 
 void RPN::calcDivide(int a, int b) {
+    if (a != 0 && b != 0 &&
+        ((b > 0 && a > std::numeric_limits<int>::max() / b) ||
+         (b < 0 && a < std::numeric_limits<int>::min() / b) ||
+         (b < 0 && a > std::numeric_limits<int>::max() / b) ||
+         (b > 0 && a < std::numeric_limits<int>::min() / b))) {
+        throw std::overflow_error("Multiplication overflow");
+    }
     stack_.push(a * b);
 }
