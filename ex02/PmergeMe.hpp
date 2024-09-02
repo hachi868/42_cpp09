@@ -17,7 +17,8 @@ public:
     void parser(std::string arg);
     void printContainers(std::string prefix) const;
     bool isContainersEqual() const;
-    void runSort();
+    void runSortVec();
+    void runSortDeque();
 
     const static std::string RESET;
     const static std::string DEBUG;
@@ -29,6 +30,8 @@ public:
 private:
     std::vector<unsigned int> cont_vec_;
     std::deque<unsigned int> cont_deque_;
+
+    void splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller);
 };
 
 

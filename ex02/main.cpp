@@ -27,6 +27,11 @@ int main(int argc, char **argv)
         for (int i = 1; i < argc; i++) {
             p_merge_me.parser(argv[i]);
         }
+
+        //sort
+        p_merge_me.runSortVec();
+        //p_merge_me.runSortDeque();
+
         //print
         if(!p_merge_me.isContainersEqual()) {
             throw std::runtime_error("The contents of the cont_vec_ and cont_deque_ are not equal.");
