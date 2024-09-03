@@ -82,39 +82,51 @@ void PmergeMe::runSortDeque() {
 void PmergeMe::splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_merge) {
     std::vector<unsigned int> cont_smaller;
     std::vector<unsigned int> cont_larger;
-    std::vector<unsigned int> tmp_cont_smaller;
-    std::vector<unsigned int> tmp_cont_larger;
 
     if (cont_org.size() <= 1) {
+        //1つになったらcont_mergeに追加。これによりmerged_smaller、merged_largerに要素が入る
         if (!cont_org.empty()) {
-            tmp_cont_larger.push_back(cont_org[0]);
+            cont_merge.push_back(cont_org[0]);
         }
         return;
     }
     for (size_t i = 0; i < cont_org.size(); i += 2) {
         if (i + 1 < cont_org.size()) {
             if (cont_org[i] < cont_org[i + 1]) {
-                tmp_cont_smaller.push_back(cont_org[i]);
-                tmp_cont_larger.push_back(cont_org[i + 1]);
+                cont_smaller.push_back(cont_org[i]);
+                cont_larger.push_back(cont_org[i + 1]);
             } else {
-                tmp_cont_smaller.push_back(cont_org[i + 1]);
-                tmp_cont_larger.push_back(cont_org[i]);
+                cont_smaller.push_back(cont_org[i + 1]);
+                cont_larger.push_back(cont_org[i]);
             }
-        } else {
-            tmp_cont_larger.push_back(cont_org[i]);
+//        } else {
+//            cont_larger.push_back(cont_org[i]);
         }
     }
-    splitIntoPairs(tmp_cont_smaller, cont_merge);
-    splitIntoPairs(tmp_cont_larger, cont_merge);
+
+    std::cout << "--- cont_smaller ---" << std::endl;
+    for (size_t i = 0; i < cont_smaller.size(); ++i) {
+        std::cout << cont_smaller[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "--- //cont_smaller ---" << std::endl << std::endl << std::endl;
+
+    std::vector<unsigned int> merged_smaller;
+    std::vector<unsigned int> merged_larger;
+
+    splitIntoPairs(cont_smaller, merged_smaller);
+    splitIntoPairs(cont_larger, merged_larger);
 
     //merge
-    mergeLS(cont_merge, tmp_cont_larger, tmp_cont_smaller);
+//    std::vector<unsigned int> tmp_cont_merge;
+    mergeLS(cont_merge, merged_larger, merged_smaller);
 
     std::cout << "--- cont_merge ---" << std::endl;
     for (size_t i = 0; i < cont_merge.size(); ++i) {
         std::cout << cont_merge[i] << " ";
     }
     std::cout << std::endl;
+    std::cout << "--- //cont_merge ---" << std::endl << std::endl << std::endl;
 }
 
 void PmergeMe::mergeLS(std::vector<unsigned int> &cont_merge, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller) {
@@ -135,22 +147,22 @@ void PmergeMe::mergeLS(std::vector<unsigned int> &cont_merge, std::vector<unsign
     while (i < cont_smaller.size() && j < cont_larger.size()) {
         if (cont_smaller[i] < cont_larger[j]) {
             cont_merge.push_back(cont_smaller[i]);
-            std::cout << "//merge1: " << cont_smaller[i] << ";;" << cont_larger[j] << std::endl;
+            //std::cout << "//merge1: " << cont_smaller[i] << ";;" << cont_larger[j] << std::endl;
             i++;
         } else {
             cont_merge.push_back(cont_larger[j]);
-            std::cout << "//merge2: " << cont_larger[j] << std::endl;
+            //std::cout << "//merge2: " << cont_larger[j] << std::endl;
             j++;
         }
     }
 
-    std::cout << "cont_merge.size() 1: " << cont_merge.size() << std::endl;
-
-    std::cout << "cont_merge: fail:";
-    for (size_t i = 0; i < cont_merge.size(); ++i) {
-        std::cout << cont_merge[i] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "cont_merge.size() 1: " << cont_merge.size() << std::endl;
+//
+//    std::cout << "cont_merge: fail:";
+//    for (size_t i = 0; i < cont_merge.size(); ++i) {
+//        std::cout << cont_merge[i] << " ";
+//    }
+//    std::cout << std::endl;
 
     // 残りの要素を追加
     while (i < cont_smaller.size()) {
