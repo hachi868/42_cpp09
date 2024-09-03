@@ -11,6 +11,7 @@ static void destructor() {
 // ./PmergeMe `shuf -i 1-100000 -n 3000 | tr "\n" " "`
 // ./PmergeMe `jot -r 3000 1 100000 | tr '\n' ' '` => mac
 // ./PmergeMe 56 5 908 3
+// ./PmergeMe 3 500 100 790
 
 //invalid arg
 // ./PmergeMe
