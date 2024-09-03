@@ -58,10 +58,10 @@ bool PmergeMe::isContainersEqual() const {
 }
 
 void PmergeMe::runSortVec() {
-    std::vector<unsigned int> cont_larger;
-    std::vector<unsigned int> cont_smaller;
+    std::vector<unsigned int> cont_merge;
+    //std::vector<unsigned int> cont_smaller;
 
-    splitIntoPairs(cont_vec_, cont_larger, cont_smaller);
+    splitIntoPairs(cont_vec_, cont_merge);
 
 //    std::cout << "cont_larger: ";
 //    for (size_t i = 0; i < cont_larger.size(); ++i) {
@@ -79,15 +79,11 @@ void PmergeMe::runSortVec() {
 void PmergeMe::runSortDeque() {
 }
 
-void PmergeMe::splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller) {
+void PmergeMe::splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_merge) {
+    std::vector<unsigned int> cont_smaller;
+    std::vector<unsigned int> cont_larger;
     std::vector<unsigned int> tmp_cont_smaller;
     std::vector<unsigned int> tmp_cont_larger;
-
-//    std::cout << "cont_org: ";
-//    for (size_t i = 0; i < cont_org.size(); ++i) {
-//        std::cout << cont_org[i] << " ";
-//    }
-//    std::cout << std::endl;
 
     if (cont_org.size() <= 1) {
         if (!cont_org.empty()) {
@@ -96,7 +92,6 @@ void PmergeMe::splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<u
         return;
     }
     for (size_t i = 0; i < cont_org.size(); i += 2) {
-        //std::cout << cont_org[i] << "/" << cont_org[i+1] << std::endl;
         if (i + 1 < cont_org.size()) {
             if (cont_org[i] < cont_org[i + 1]) {
                 tmp_cont_smaller.push_back(cont_org[i]);
@@ -109,17 +104,73 @@ void PmergeMe::splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<u
             tmp_cont_larger.push_back(cont_org[i]);
         }
     }
-//    std::cout << "tmp_cont_larger: ";
-//    for (size_t i = 0; i < tmp_cont_larger.size(); ++i) {
-//        std::cout << tmp_cont_larger[i] << " ";
-//    }
-//    std::cout << std::endl;
-//
-//    std::cout << "tmp_cont_smaller: ";
-//    for (size_t i = 0; i < tmp_cont_smaller.size(); ++i) {
-//        std::cout << tmp_cont_smaller[i] << " ";
-//    }
-//    std::cout << std::endl;
-    splitIntoPairs(tmp_cont_smaller, cont_larger, cont_smaller);
-    splitIntoPairs(tmp_cont_larger, cont_larger, cont_smaller);
+    splitIntoPairs(tmp_cont_smaller, cont_merge);
+    splitIntoPairs(tmp_cont_larger, cont_merge);
+
+    //merge
+    mergeLS(cont_merge, tmp_cont_larger, tmp_cont_smaller);
+
+    std::cout << "--- cont_merge ---" << std::endl;
+    for (size_t i = 0; i < cont_merge.size(); ++i) {
+        std::cout << cont_merge[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+void PmergeMe::mergeLS(std::vector<unsigned int> &cont_merge, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller) {
+    std::cout << std::endl << "***mergeLS" << std::endl;
+    std::cout << "cont_larger: not sorted?:";
+    for (size_t i = 0; i < cont_larger.size(); ++i) {
+        std::cout << cont_larger[i] << " ";
+    }
+    std::cout << "(size:"<< cont_larger.size() << ")"<<std::endl;
+
+    std::cout << "cont_smaller: not sorted?:";
+    for (size_t i = 0; i < cont_smaller.size(); ++i) {
+        std::cout << cont_smaller[i] << " ";
+    }
+    std::cout << "(size:"<< cont_smaller.size() << ")"<<std::endl;
+
+    size_t i = 0, j = 0;
+    while (i < cont_smaller.size() && j < cont_larger.size()) {
+        if (cont_smaller[i] < cont_larger[j]) {
+            cont_merge.push_back(cont_smaller[i]);
+            std::cout << "//merge1: " << cont_smaller[i] << ";;" << cont_larger[j] << std::endl;
+            i++;
+        } else {
+            cont_merge.push_back(cont_larger[j]);
+            std::cout << "//merge2: " << cont_larger[j] << std::endl;
+            j++;
+        }
+    }
+
+    std::cout << "cont_merge.size() 1: " << cont_merge.size() << std::endl;
+
+    std::cout << "cont_merge: fail:";
+    for (size_t i = 0; i < cont_merge.size(); ++i) {
+        std::cout << cont_merge[i] << " ";
+    }
+    std::cout << std::endl;
+
+    // 残りの要素を追加
+    while (i < cont_smaller.size()) {
+        cont_merge.push_back(cont_smaller[i]);
+        std::cout << "//merge3: " << cont_smaller[i] << std::endl;
+        i++;
+    }
+
+    while (j < cont_larger.size()) {
+        cont_merge.push_back(cont_larger[j]);
+        std::cout << "//merge4: " << cont_larger[j] << std::endl;
+        j++;
+    }
+
+    std::cout << "cont_merge.size() 2: " << cont_merge.size() << std::endl;
+
+    std::cout << "cont_merge: ";
+    for (size_t i = 0; i < cont_merge.size(); ++i) {
+        std::cout << cont_merge[i] << " ";
+    }
+    std::cout << std::endl;
+    std::cout << "----- ***mergeLS//" << std::endl << std::endl;
 }

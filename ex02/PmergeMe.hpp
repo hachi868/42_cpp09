@@ -31,7 +31,8 @@ private:
     std::vector<unsigned int> cont_vec_;
     std::deque<unsigned int> cont_deque_;
 
-    void splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller);
+    void splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_merge);
+    void mergeLS(std::vector<unsigned int> &cont_merge, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller);
 };
 
 
