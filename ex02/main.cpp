@@ -1,4 +1,5 @@
 #include "PmergeMe.hpp"
+#include <sys/time.h>
 
 __attribute__((destructor))
 static void destructor() {
@@ -36,15 +37,29 @@ int main(int argc, char **argv)
         }
         p_merge_me.printContainers("Before");
 
-        //sort
+        //time
+        struct timeval start,end;
+
+        //sort(vec)
+        gettimeofday(&start, NULL);
         p_merge_me.runSortVec();
+        gettimeofday(&end, NULL);
+        double time_vec = (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
+
+        //sort(deque)
+        gettimeofday(&start, NULL);
         p_merge_me.runSortDeque();
+        gettimeofday(&end, NULL);
+        double time_deque = (end.tv_sec - start.tv_sec) * 1000000.0 + (end.tv_usec - start.tv_usec);
 
         if(!p_merge_me.isContainersEqual()) {
             throw std::runtime_error("The contents of the cont_vec_ and cont_deque_ are not equal.(after)");
         }
-        p_merge_me.printContainers("After");
 
+        //print
+        p_merge_me.printContainers("After");
+        std::cout << "Time to process a range of " << argc - 1 << " elements with std::vector : " << time_vec << " µs" <<  std::endl;
+        std::cout << "Time to process a range of " << argc - 1 << " elements with std::deque : " << time_deque << " µs" <<  std::endl;
     } catch (const std::exception& e) {
         std::cerr << PmergeMe::ERROR << "[ERROR] " << e.what() << PmergeMe::RESET << std::endl;
         return 1;
