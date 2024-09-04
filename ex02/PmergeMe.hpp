@@ -21,7 +21,6 @@ public:
     void runSortDeque();
     void printDebug(const std::vector<long> &cont) const;
     void printDebugPair(const std::vector<std::pair<long, long> > &pair) const;
-    bool isSorted(const std::vector<long> &cont);
 
     const static std::string RESET;
     const static std::string DEBUG;
@@ -34,8 +33,16 @@ private:
     std::vector<long> cont_vec_;
     std::deque<long> cont_deque_;
 
+    //vector
     std::vector<long> splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge);
     void margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge);
+    bool isSorted(const std::vector<long> &cont);
+
+    //deque
+    std::deque<long> splitIntoPairs(std::deque<long> &cont, std::deque<long> &cont_merge);
+    void margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge);
+    bool isSorted(const std::deque<long> &cont);
+
     static bool comparePairs(const std::pair<long, long>& a, const std::pair<long, long>& b);
 };
 

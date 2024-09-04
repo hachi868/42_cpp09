@@ -62,18 +62,6 @@ void PmergeMe::printDebugPair(const std::vector<std::pair<long, long> > &pair) c
     std::cout << std::endl;
 }
 
-bool PmergeMe::isSorted(const std::vector<long> &cont) {
-    if (cont.size() <= 1) {
-        return true;
-    }
-    for (size_t i = 1; i < cont.size(); ++i) {
-        if (cont[i] < cont[i - 1]) {
-            return false;
-        }
-    }
-    return true;
-}
-
 bool PmergeMe::isContainersEqual() const {
     if (cont_vec_.size() != cont_deque_.size()) {
         return false;
@@ -86,14 +74,23 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
     cont_vec_ = cont_merge;
-    std::cout << "cont_merge: isSorted: " << isSorted(cont_vec_) << std::endl;
-    for (size_t i = 0; i < cont_vec_.size(); ++i) {
-        std::cout << cont_vec_[i] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
+//    for (size_t i = 0; i < cont_vec_.size(); ++i) {
+//        std::cout << cont_vec_[i] << " ";
+//    }
+//    std::cout << std::endl;
 }
 
 void PmergeMe::runSortDeque() {
+    std::deque<long> cont_merge;
+
+    splitIntoPairs(cont_deque_, cont_merge);
+    cont_deque_ = cont_merge;
+//    std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
+//    for (size_t i = 0; i < cont_deque_.size(); ++i) {
+//        std::cout << cont_deque_[i] << " ";
+//    }
+//    std::cout << std::endl;
 }
 
 
@@ -171,5 +168,88 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
 //    std::cout << "cont_pairs: " << std::endl;
 //    printDebugPair(cont_pairs);
 //    std::cout << "----- ***margeSort//" << std::endl << std::endl;
+}
+
+bool PmergeMe::isSorted(const std::vector<long> &cont) {
+    if (cont.size() <= 1) {
+        return true;
+    }
+    for (size_t i = 1; i < cont.size(); ++i) {
+        if (cont[i] < cont[i - 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+std::deque<long> PmergeMe::splitIntoPairs(std::deque<long> &cont, std::deque<long> &cont_merge) {
+    std::deque<long> cont_larger;
+    std::deque<std::pair<long, long> > cont_pairs;
+
+    if (cont.size() <= 1) {
+        if (!cont.empty()) {
+            cont_larger.push_back(cont[0]);
+        }
+        return cont_larger;
+    }
+
+    for (size_t i = 0; i < cont.size(); i += 2) {
+        if (i + 1 < cont.size()) {
+            long first = cont[i];
+            long second = cont[i + 1];
+            if (first < second) {
+                std::swap(first, second);
+            }
+            cont_larger.push_back(first);
+            cont_pairs.push_back(std::make_pair(first, second));
+        } else {
+            cont_larger.push_back(cont[i]);
+            cont_pairs.push_back(std::make_pair(cont[i], -1));
+        }
+    }
+
+    splitIntoPairs(cont_larger, cont_merge);
+    margeSort(cont_pairs, cont_merge);
+    return cont_larger;
+}
+
+void PmergeMe::margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge) {
+    if (cont_merge.size() == 0) {
+        if (cont_pairs[0].second > 0) {
+            cont_merge.push_back(cont_pairs[0].second);
+        }
+        cont_merge.push_back(cont_pairs[0].first);
+        return;
+    }
+    if (cont_pairs.size() > 1) {
+        std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
+    }
+
+    size_t index = 0;
+    size_t pos = 0;
+    for (std::deque<std::pair<long, long> >::iterator it = cont_pairs.begin(); it != cont_pairs.end(); ++it, ++index, ++pos) {
+        if (it->second < 0) {
+            continue;
+        }
+        if (index == 0) {
+            cont_merge.insert(cont_merge.begin(), it->second);
+        } else {
+            std::deque<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
+            cont_merge.insert(it2, it->second);
+        }
+        pos++;
+    }
+}
+
+bool PmergeMe::isSorted(const std::deque<long> &cont) {
+    if (cont.size() <= 1) {
+        return true;
+    }
+    for (size_t i = 1; i < cont.size(); ++i) {
+        if (cont[i] < cont[i - 1]) {
+            return false;
+        }
+    }
+    return true;
 }
 
