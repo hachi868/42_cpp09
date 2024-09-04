@@ -21,6 +21,7 @@ public:
     void runSortDeque();
     void printDebug(const std::vector<long> &cont) const;
     void printDebugPair(const std::vector<std::pair<long, long> > &pair) const;
+    bool isSorted(const std::vector<long> &cont);
 
     const static std::string RESET;
     const static std::string DEBUG;

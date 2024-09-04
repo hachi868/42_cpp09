@@ -62,6 +62,18 @@ void PmergeMe::printDebugPair(const std::vector<std::pair<long, long> > &pair) c
     std::cout << std::endl;
 }
 
+bool PmergeMe::isSorted(const std::vector<long> &cont) {
+    if (cont.size() <= 1) {
+        return true;
+    }
+    for (size_t i = 1; i < cont.size(); ++i) {
+        if (cont[i] < cont[i - 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool PmergeMe::isContainersEqual() const {
     if (cont_vec_.size() != cont_deque_.size()) {
         return false;
@@ -74,11 +86,11 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
 
-    std::cout << "cont_merge: ";
-    for (size_t i = 0; i < cont_merge.size(); ++i) {
-        std::cout << cont_merge[i] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "cont_merge: isSorted: " << isSorted(cont_merge) << std::endl;
+//    for (size_t i = 0; i < cont_merge.size(); ++i) {
+//        std::cout << cont_merge[i] << " ";
+//    }
+//    std::cout << std::endl;
 }
 
 void PmergeMe::runSortDeque() {
