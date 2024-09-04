@@ -35,7 +35,7 @@ private:
     std::deque<long> cont_deque_;
 
     std::vector<long> splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge);
-    void margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_larger, std::vector<long> &cont_merge);
+    void margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge);
     static bool comparePairs(const std::pair<long, long>& a, const std::pair<long, long>& b);
 };
 

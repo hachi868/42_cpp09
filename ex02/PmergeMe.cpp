@@ -132,8 +132,7 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     return cont_larger;
 }
 
-void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_larger, std::vector<long> &cont_merge) {
-    (void)cont_larger;
+void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
 
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
