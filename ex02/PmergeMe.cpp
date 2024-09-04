@@ -133,51 +133,39 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
 void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_larger, std::vector<long> &cont_merge) {
     (void)cont_larger;
 
-    std::cout << "/////cont_merge.size: " << cont_merge.size() << std::endl;
+    //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
-        cont_merge.push_back(cont_pairs[0].second);
+        if (cont_pairs[0].second > 0) {
+            cont_merge.push_back(cont_pairs[0].second);
+        }
         cont_merge.push_back(cont_pairs[0].first);
+        return;
     }
 
-    //todo:pair sort
+    //再帰
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
 
-    std::cout << "///////margeSort: " << std::endl;
-//    std::cout << "cont_larger: " << std::endl;
-//    printDebug(cont_larger);
-    std::cout << "cont_merge: " << std::endl;
-    printDebug(cont_merge);
-    std::cout << "cont_pairs: " << std::endl;
-    printDebugPair(cont_pairs);
-
-//    size_t i = 0, j = 0;
-//    while (i < cont_smaller.size() && j < cont_larger.size()) {
-//        if (cont_smaller[i] < cont_larger[j]) {
-//            cont_merge.push_back(cont_smaller[i]);
-//            std::cout << "//merge1: " << cont_smaller[i] << " (::" << cont_larger[j] << std::endl;
-//            i++;
-//        } else {
-//            cont_merge.push_back(cont_larger[j]);
-//            std::cout << "//merge2: " << cont_larger[j] << std::endl;
-//            j++;
-//        }
-//    }
-
-    // 残りの要素を追加
-//    while (i < cont_smaller.size()) {
-//        cont_merge.push_back(cont_smaller[i]);
-//        std::cout << "//merge3: " << cont_smaller[i] << std::endl;
-//        i++;
-//    }
-//
-//    while (j < cont_larger.size()) {
-//        cont_merge.push_back(cont_larger[j]);
-//        std::cout << "//merge4: " << cont_larger[j] << std::endl;
-//        j++;
-//    }
-    //todo: ここまでにcont_pairsで渡された要素がcont_mergeに並ぶ
-    std::cout << "----- ***margeSort//" << std::endl << std::endl;
+    size_t index = 0;
+    size_t pos = 0;
+    for (std::vector<std::pair<long, long> >::iterator it = cont_pairs.begin(); it != cont_pairs.end(); ++it, ++index, ++pos) {
+        if (it->second < 0) {
+            continue;
+        }
+        if (index == 0) {
+            cont_merge.insert(cont_merge.begin(), it->second);
+        } else {
+            std::vector<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
+            cont_merge.insert(it2, it->second);
+        }
+    }
+    
+//    std::cout << "///////margeSort: " << std::endl;
+//    std::cout << "cont_merge: " << std::endl;
+//    printDebug(cont_merge);
+//    std::cout << "cont_pairs: " << std::endl;
+//    printDebugPair(cont_pairs);
+//    std::cout << "----- ***margeSort//" << std::endl << std::endl;
 }
 
