@@ -19,6 +19,7 @@ public:
     bool isContainersEqual() const;
     void runSortVec();
     void runSortDeque();
+    void printDebug(const std::vector<long> &cont) const;
 
     const static std::string RESET;
     const static std::string DEBUG;
@@ -28,11 +29,11 @@ public:
     const static std::string ERROR;
 
 private:
-    std::vector<unsigned int> cont_vec_;
-    std::deque<unsigned int> cont_deque_;
+    std::vector<long> cont_vec_;
+    std::deque<long> cont_deque_;
 
-    void splitIntoPairs(std::vector<unsigned int> &cont_org, std::vector<unsigned int> &cont_merge);
-    void mergeLS(std::vector<unsigned int> &cont_merge, std::vector<unsigned int> &cont_larger, std::vector<unsigned int> &cont_smaller);
+    std::vector<long> splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge);
+    void margeSort(std::vector<long> &cont_merge, std::vector<long> &cont_larger, std::vector<long> &cont_smaller);
 };
 
 
