@@ -54,6 +54,14 @@ void PmergeMe::printDebug(const std::vector<long> &cont) const {
     std::cout << std::endl;
 }
 
+
+void PmergeMe::printDebugPair(const std::vector<std::pair<long, long> > &pair) const {
+    for (size_t i = 0; i < pair.size(); ++i) {
+        std::cout << "(" << pair[i].first << ", " << pair[i].second << ") ";
+    }
+    std::cout << std::endl;
+}
+
 bool PmergeMe::isContainersEqual() const {
     if (cont_vec_.size() != cont_deque_.size()) {
         return false;
@@ -76,9 +84,14 @@ void PmergeMe::runSortVec() {
 void PmergeMe::runSortDeque() {
 }
 
+
+bool PmergeMe::comparePairs(const std::pair<long, long>& a, const std::pair<long, long>& b) {
+    return a.first < b.first;
+}
+
 std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge) {
     std::vector<long> cont_larger;
-    std::vector<long> cont_smaller;
+    std::vector<std::pair<long, long> > cont_pairs;
 
     if (cont.size() <= 1) {
         if (!cont.empty()) {
@@ -86,17 +99,19 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
         }
         return cont_larger;
     }
+
     for (size_t i = 0; i < cont.size(); i += 2) {
         if (i + 1 < cont.size()) {
-            if (cont[i] < cont[i + 1]) {
-                cont_smaller.push_back(cont[i]);
-                cont_larger.push_back(cont[i + 1]);
-            } else {
-                cont_smaller.push_back(cont[i + 1]);
-                cont_larger.push_back(cont[i]);
+            long first = cont[i];
+            long second = cont[i + 1];
+            if (first < second) {
+                std::swap(first, second);
             }
+            cont_larger.push_back(first);
+            cont_pairs.push_back(std::make_pair(first, second));
         } else {
             cont_larger.push_back(cont[i]);
+            cont_pairs.push_back(std::make_pair(cont[i], -1));
         }
     }
 
@@ -104,29 +119,38 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     std::cout << "///////splitIntoPairs: " << std::endl;
     std::cout << "cont_larger: " << std::endl;
     printDebug(cont_larger);
-    std::cout << "cont_smaller: " << std::endl;
-    printDebug(cont_smaller);
     std::cout << "cont_merge: " << std::endl;
     printDebug(cont_merge);
+    std::cout << "cont_pairs: " << std::endl;
+    printDebugPair(cont_pairs);
 
-    //todo::smaller並びかえ
-
-    margeSort(cont_merge, cont_larger, cont_smaller);
+    margeSort(cont_pairs, cont_larger, cont_merge);
 
     std::cout << "----- ***splitIntoPairs//" << std::endl << std::endl;
     return cont_larger;
 }
 
-void PmergeMe::margeSort(std::vector<long> &cont_merge, std::vector<long> &cont_larger, std::vector<long> &cont_smaller) {
+void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_larger, std::vector<long> &cont_merge) {
+    (void)cont_larger;
 
+    std::cout << "/////cont_merge.size: " << cont_merge.size() << std::endl;
+    if (cont_merge.size() == 0) {
+        cont_merge.push_back(cont_pairs[0].second);
+        cont_merge.push_back(cont_pairs[0].first);
+    }
 
-//    std::cout << "///////margeSort: " << std::endl;
+    //todo:pair sort
+    if (cont_pairs.size() > 1) {
+        std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
+    }
+
+    std::cout << "///////margeSort: " << std::endl;
 //    std::cout << "cont_larger: " << std::endl;
 //    printDebug(cont_larger);
-//    std::cout << "cont_smaller: " << std::endl;
-//    printDebug(cont_smaller);
-//    std::cout << "cont_merge: " << std::endl;
-//    printDebug(cont_merge);
+    std::cout << "cont_merge: " << std::endl;
+    printDebug(cont_merge);
+    std::cout << "cont_pairs: " << std::endl;
+    printDebugPair(cont_pairs);
 
 //    size_t i = 0, j = 0;
 //    while (i < cont_smaller.size() && j < cont_larger.size()) {
@@ -153,5 +177,7 @@ void PmergeMe::margeSort(std::vector<long> &cont_merge, std::vector<long> &cont_
 //        std::cout << "//merge4: " << cont_larger[j] << std::endl;
 //        j++;
 //    }
+    //todo: ここまでにcont_pairsで渡された要素がcont_mergeに並ぶ
     std::cout << "----- ***margeSort//" << std::endl << std::endl;
 }
+
