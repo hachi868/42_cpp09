@@ -153,12 +153,16 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
         if (it->second < 0) {
             continue;
         }
+        std::cout << "pos: " << pos << "/" << *(cont_merge.begin()+pos) << std::endl;
         if (index == 0) {
             cont_merge.insert(cont_merge.begin(), it->second);
         } else {
             std::vector<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
             cont_merge.insert(it2, it->second);
         }
+        pos++;
+        std::cout << "cont_merge: " << std::endl;
+        printDebug(cont_merge);
     }
     
 //    std::cout << "///////margeSort: " << std::endl;
