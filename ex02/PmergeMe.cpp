@@ -74,7 +74,7 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
 
-    std::cout << "cont_sorted: ";
+    std::cout << "cont_merge: ";
     for (size_t i = 0; i < cont_merge.size(); ++i) {
         std::cout << cont_merge[i] << " ";
     }
@@ -116,17 +116,7 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     }
 
     splitIntoPairs(cont_larger, cont_merge);
-    std::cout << "///////splitIntoPairs: " << std::endl;
-    std::cout << "cont_larger: " << std::endl;
-    printDebug(cont_larger);
-    std::cout << "cont_merge: " << std::endl;
-    printDebug(cont_merge);
-    std::cout << "cont_pairs: " << std::endl;
-    printDebugPair(cont_pairs);
-
     margeSort(cont_pairs, cont_larger, cont_merge);
-
-    std::cout << "----- ***splitIntoPairs//" << std::endl << std::endl;
     return cont_larger;
 }
 
@@ -153,7 +143,6 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
         if (it->second < 0) {
             continue;
         }
-        std::cout << "pos: " << pos << "/" << *(cont_merge.begin()+pos) << std::endl;
         if (index == 0) {
             cont_merge.insert(cont_merge.begin(), it->second);
         } else {
@@ -161,8 +150,8 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
             cont_merge.insert(it2, it->second);
         }
         pos++;
-        std::cout << "cont_merge: " << std::endl;
-        printDebug(cont_merge);
+//        std::cout << "cont_merge: " << std::endl;
+//        printDebug(cont_merge);
     }
     
 //    std::cout << "///////margeSort: " << std::endl;
