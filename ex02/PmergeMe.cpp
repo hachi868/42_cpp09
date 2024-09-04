@@ -85,12 +85,12 @@ void PmergeMe::runSortVec() {
     std::vector<long> cont_merge;
 
     splitIntoPairs(cont_vec_, cont_merge);
-
-//    std::cout << "cont_merge: isSorted: " << isSorted(cont_merge) << std::endl;
-//    for (size_t i = 0; i < cont_merge.size(); ++i) {
-//        std::cout << cont_merge[i] << " ";
-//    }
-//    std::cout << std::endl;
+    cont_vec_ = cont_merge;
+    std::cout << "cont_merge: isSorted: " << isSorted(cont_vec_) << std::endl;
+    for (size_t i = 0; i < cont_vec_.size(); ++i) {
+        std::cout << cont_vec_[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 void PmergeMe::runSortDeque() {
@@ -128,7 +128,7 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     }
 
     splitIntoPairs(cont_larger, cont_merge);
-    margeSort(cont_pairs, cont_larger, cont_merge);
+    margeSort(cont_pairs, cont_merge);
     return cont_larger;
 }
 

@@ -39,6 +39,7 @@ int main(int argc, char **argv)
             throw std::runtime_error("The contents of the cont_vec_ and cont_deque_ are not equal.");
         }
         p_merge_me.printContainers("Before");
+        p_merge_me.printContainers("After");
 
     } catch (const std::exception& e) {
         std::cerr << PmergeMe::ERROR << "[ERROR] " << e.what() << PmergeMe::RESET << std::endl;
