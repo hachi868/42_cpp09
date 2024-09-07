@@ -74,7 +74,7 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
     cont_vec_ = cont_merge;
-    std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
+    //std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
 //    for (size_t i = 0; i < cont_vec_.size(); ++i) {
 //        std::cout << cont_vec_[i] << " ";
 //    }
@@ -86,7 +86,7 @@ void PmergeMe::runSortDeque() {
 
     splitIntoPairs(cont_deque_, cont_merge);
     cont_deque_ = cont_merge;
-//    std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
+    //std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
 //    for (size_t i = 0; i < cont_deque_.size(); ++i) {
 //        std::cout << cont_deque_[i] << " ";
 //    }
@@ -151,12 +151,6 @@ std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsth
 }
 
 void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
-//    std::cout << "margeSort pair:";
-//    std::vector<std::pair<long, long> >::const_iterator it;
-//    for (it = cont_pairs.begin(); it != cont_pairs.end(); ++it) {
-//        std::cout << "(" << it->first << ", " << it->second << ") ";
-//    }
-//    std::cout << std::endl;
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
         cont_merge.push_back(cont_pairs[0].second);

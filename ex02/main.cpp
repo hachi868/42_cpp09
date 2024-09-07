@@ -8,11 +8,13 @@ static void destructor() {
 
 //subject
 // ./PmergeMe 3 5 9 7 4
+
 // ./PmergeMe "-1" "2"
 // ./PmergeMe `shuf -i 1-100000 -n 3000 | tr "\n" " "`
 // ./PmergeMe `jot -r 3000 1 100000 | tr '\n' ' '` => mac
 // ./PmergeMe 56 5 908 3
 // ./PmergeMe 3 500 100 790
+// ./PmergeMe 3 500 100 790 6 9 38 806 577
 
 //invalid arg
 // ./PmergeMe
