@@ -119,8 +119,8 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
             cont_larger.push_back(first);
             cont_pairs.push_back(std::make_pair(first, second));
         } else {
-            cont_larger.push_back(cont[i]);
-            cont_pairs.push_back(std::make_pair(cont[i], -1));
+            std::cout << "///余り：" << cont[i] << std::endl;
+            cont_pairs.push_back(std::make_pair(-1, cont[i]));
         }
     }
 
@@ -133,7 +133,7 @@ std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsth
     std::vector<std::vector<std::pair<long, long> > > splitedVectors;
 
     std::vector<long> jacobsthalSequence = generateJacobsthalSequence(cont_pairs.size());
-    std::cout << "///generateJacobsthalSequence: " << cont_pairs.size() << std::endl;
+    std::cout << "///generateJacobsthalSequence: (pair size" << cont_pairs.size() << ") ";
     printDebug(jacobsthalSequence);
 
     size_t startIndex = 0;
@@ -151,53 +151,98 @@ std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsth
 }
 
 void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
-
+    std::cout << "margeSort pair:";
+    std::vector<std::pair<long, long> >::const_iterator it;
+    for (it = cont_pairs.begin(); it != cont_pairs.end(); ++it) {
+        std::cout << "(" << it->first << ", " << it->second << ") ";
+    }
+    std::cout << std::endl;
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
-        if (cont_pairs[0].second > 0) {
-            cont_merge.push_back(cont_pairs[0].second);
+        cont_merge.push_back(cont_pairs[0].second);
+        if (cont_pairs[0].first > 0) {
+            cont_merge.push_back(cont_pairs[0].first);
         }
-        cont_merge.push_back(cont_pairs[0].first);
         return;
     }
 
-    //再帰
+    //pair sort
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
+    //奇数があればpairの最後に送る。firstはpairのlastのfirst(つまり最大値)と同じにしておく。検索範囲を全体にするため。
+    if (cont_pairs[0].first < 0) {
+        cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+
+        std::pair<long, long> elResidue = cont_pairs.front();
+        cont_pairs.erase(cont_pairs.begin());
+        cont_pairs.push_back(elResidue);
+    }
     //
-    std::vector<std::vector<std::pair<long, long> > > partitionedVectors = splitPairsByJacobsthal(cont_pairs);
-    std::cout << "///partitionedVectors: " << cont_pairs.size() << std::endl;
-    for (size_t i = 0; i < partitionedVectors.size(); ++i) {
+    std::vector<std::vector<std::pair<long, long> > > splitedVectors = splitPairsByJacobsthal(cont_pairs);
+    std::cout << "///splitedVectors: " << splitedVectors.size() << std::endl;
+    for (size_t i = 0; i < splitedVectors.size(); ++i) {
         std::cout << "Partition " << i + 1 << ": ";
         std::vector<std::pair<long, long> >::const_iterator it;
-        for (it = partitionedVectors[i].begin(); it != partitionedVectors[i].end(); ++it) {
+        for (it = splitedVectors[i].begin(); it != splitedVectors[i].end(); ++it) {
             std::cout << "(" << it->first << ", " << it->second << ") ";
         }
         std::cout << std::endl;
     }
+    for (size_t p = 0; p < splitedVectors.size(); ++p) {
+        const std::vector<std::pair<long, long> > &partition = splitedVectors[p];
+        std::cout << "//0 cont_merge: ";
+        printDebug(cont_merge);
 
+        size_t index = 0;
+        for (std::vector<std::pair<long, long> >::const_reverse_iterator it = partition.rbegin(); it != partition.rend(); ++it, ++index) {
+            std::cout << "// " << it->second << "(L : " << it->first << ")" << std::endl;
+            std::vector<long>::iterator it_first = std::find(cont_merge.begin(), cont_merge.end(), it->first);
+            if (it_first != cont_merge.end()) {
+                // first の位置を基準にするための位置を決定
+                size_t pos = std::distance(cont_merge.begin(), it_first);
 
-    size_t index = 0;
-    size_t pos = 0;
-    for (std::vector<std::pair<long, long> >::iterator it = cont_pairs.begin(); it != cont_pairs.end(); ++it, ++index, ++pos) {
-        if (it->second < 0) {
-            continue;
+                // second の挿入位置を見つける
+                if (pos <= cont_merge.size()) {
+                    // second の挿入位置を見つける
+                    std::vector<long>::iterator it_insert = std::lower_bound(cont_merge.begin(), cont_merge.begin() + pos, it->second);
+                    cont_merge.insert(it_insert, it->second);
+                } else {
+                    std::cout << "Invalid position: " << pos << std::endl;
+                }
+            } else {
+                std::cout << it->first << " not found in cont_merge" << std::endl;
+            }
         }
-        if (index == 0) {
-            cont_merge.insert(cont_merge.begin(), it->second);
-        } else {
-            std::vector<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
-            cont_merge.insert(it2, it->second);
-        }
-        pos++;
+        std::cout << "//1 cont_merge: ";
+        printDebug(cont_merge);
+    }
+
+//    size_t index = 0;
+//    size_t pos = 0;
+//    for (std::vector<std::pair<long, long> >::iterator it = cont_pairs.begin(); it != cont_pairs.end(); ++it, ++index, ++pos) {
+//        if (it->second < 0) {
+//            continue;
+//        }
+//        if (index == 0) {
+//            cont_merge.insert(cont_merge.begin(), it->second);
+//        } else {
+//            std::vector<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
+//            cont_merge.insert(it2, it->second);
+//        }
+//        pos++;
 //        std::cout << "cont_merge: " << std::endl;
 //        printDebug(cont_merge);
-    }
-    
-//    std::cout << "///////margeSort: " << std::endl;
-//    std::cout << "cont_merge: " << std::endl;
-//    printDebug(cont_merge);
+//    }
+
+
+
+
+
+
+    std::cout << "///////margeSort: " << std::endl;
+    std::cout << "cont_merge: ";
+    printDebug(cont_merge);
 //    std::cout << "cont_pairs: " << std::endl;
 //    printDebugPair(cont_pairs);
 //    std::cout << "----- ***margeSort//" << std::endl << std::endl;
@@ -236,8 +281,7 @@ std::deque<long> PmergeMe::splitIntoPairs(std::deque<long> &cont, std::deque<lon
             cont_larger.push_back(first);
             cont_pairs.push_back(std::make_pair(first, second));
         } else {
-            cont_larger.push_back(cont[i]);
-            cont_pairs.push_back(std::make_pair(cont[i], -1));
+            cont_pairs.push_back(std::make_pair(-1, cont[i]));
         }
     }
 
