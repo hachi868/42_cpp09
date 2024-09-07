@@ -19,7 +19,7 @@ static void destructor() {
 int main(int argc, char **argv)
 {
     if (argc != 2) {
-        std::cerr << BitcoinExchange::ERROR << "[error]Invalid args." << BitcoinExchange::RESET << std::endl;
+        std::cerr << BitcoinExchange::ERROR << "Error: could not open file." << BitcoinExchange::RESET << std::endl;
         return 1;
     }
     try {
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         // open
         std::ifstream file(argv[1]);
         if (!file.is_open()) {
-            throw std::runtime_error("Could not open input file.");
+            throw std::runtime_error("could not open input file.");
         }
 
         // read line
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
             try {
                 std::istringstream lineStream(line);
                 if (!BitcoinExchange::split_line(lineStream, '|', date, rateStr)) {
-                    std::cerr << BitcoinExchange::ERROR << "[error]Invalid Line: " << line << BitcoinExchange::RESET << std::endl;
+                    std::cerr << BitcoinExchange::ERROR << "Error: Invalid Line: " << line << BitcoinExchange::RESET << std::endl;
                     continue;
                 }
                 if (isFirstLine) {
@@ -61,12 +61,12 @@ int main(int argc, char **argv)
                     }
                 }
                 if (!BitcoinExchange::isValidDate(date)) {
-                    std::cerr << BitcoinExchange::ERROR << "[error]Invalid Date: " << date << BitcoinExchange::RESET << std::endl;
+                    std::cerr << BitcoinExchange::ERROR << "Error: bad input => " << date << BitcoinExchange::RESET << std::endl;
                     continue;
                 }
                 //rate
                 if (rateStr[0] == '-') {
-                    std::cerr << BitcoinExchange::ERROR << "[error]not a positive number: " << rateStr << BitcoinExchange::RESET << std::endl;
+                    std::cerr << BitcoinExchange::ERROR << "Error: not a positive number." << BitcoinExchange::RESET << std::endl;
                     continue;
                 }
                 std::stringstream rateStream(rateStr);
@@ -74,11 +74,11 @@ int main(int argc, char **argv)
                     //double
                     double exchangeRateDouble;
                     if (!(rateStream >> exchangeRateDouble) || !rateStream.eof()) {
-                        std::cerr << BitcoinExchange::ERROR << "[error]Invalid Rate: " << rateStr << "/" << exchangeRateDouble << BitcoinExchange::RESET << std::endl;
+                        std::cerr << BitcoinExchange::ERROR << "Error: invalid Rate." << BitcoinExchange::RESET << std::endl;
                         continue;
                     }
                     if (exchangeRateDouble > 1000.0) {
-                        std::cerr << BitcoinExchange::ERROR << "[error]too large a number: " << rateStr << BitcoinExchange::RESET << std::endl;
+                        std::cerr << BitcoinExchange::ERROR << "Error: too large a number." << BitcoinExchange::RESET << std::endl;
                         continue;
                     }
                     btcEx.putValue(date, exchangeRateDouble);
@@ -86,32 +86,32 @@ int main(int argc, char **argv)
                     //int
                     unsigned int exchangeRateInt;
                     if (!(rateStream >> exchangeRateInt) || !rateStream.eof()) {
-                        std::cerr << BitcoinExchange::ERROR << "[error]Invalid Rate: " << rateStr << BitcoinExchange::RESET << std::endl;
+                        std::cerr << BitcoinExchange::ERROR << "Error: Invalid Rate." << BitcoinExchange::RESET << std::endl;
                         continue;
                     }
                     if (exchangeRateInt > 1000) {
-                        std::cerr << BitcoinExchange::ERROR << "[error]too large a number: " << rateStr << BitcoinExchange::RESET << std::endl;
+                        std::cerr << BitcoinExchange::ERROR << "Error: too large a number." << BitcoinExchange::RESET << std::endl;
                         continue;
                     }
                     btcEx.putValue(date, exchangeRateInt);
                 }
             } catch (const BitcoinExchange::InvalidPastDateException& e) {
-                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+                std::cerr << BitcoinExchange::ERROR << "Error: " << e.what() << BitcoinExchange::RESET << std::endl;
             } catch (const BitcoinExchange::ParseExceptionInput& e) {
-                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+                std::cerr << BitcoinExchange::ERROR << "Error: " << e.what() << BitcoinExchange::RESET << std::endl;
                 break;
             } catch (const std::exception& e) {
-                std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+                std::cerr << BitcoinExchange::ERROR << "Error: " << e.what() << BitcoinExchange::RESET << std::endl;
                 break;
             }
         }
         // close
         file.close();
     } catch (const BitcoinExchange::ParseExceptionDb& e) {
-        std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+        std::cerr << BitcoinExchange::ERROR << "Error: " << e.what() << BitcoinExchange::RESET << std::endl;
         return 1;
     } catch (const std::exception& e) {
-        std::cerr << BitcoinExchange::ERROR << "[ERROR] " << e.what() << BitcoinExchange::RESET << std::endl;
+        std::cerr << BitcoinExchange::ERROR << "Error: " << e.what() << BitcoinExchange::RESET << std::endl;
         return 1;
     }
     return 0;
