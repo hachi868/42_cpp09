@@ -34,7 +34,7 @@ void RPN::parser(std::string expression) {
         if (isDigitPositive(token)) {
             stack_.push(token[0] - '0');
         } else if (isDigitNegative(token)) {
-            stack_.push((token[1] - '0') * -1);
+            throw std::runtime_error("Invalid token.");
         } else if (isOperator(token)) {
             runCalc(token[0]);
         } else {
