@@ -129,6 +129,27 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     return cont_larger;
 }
 
+std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsthal(const std::vector<std::pair<long, long> >& cont_pairs) {
+    std::vector<std::vector<std::pair<long, long> > > splitedVectors;
+
+    std::vector<long> jacobsthalSequence = generateJacobsthalSequence(cont_pairs.size());
+    std::cout << "///generateJacobsthalSequence: " << cont_pairs.size() << std::endl;
+    printDebug(jacobsthalSequence);
+
+    size_t startIndex = 0;
+    for (size_t i = 0; i < jacobsthalSequence.size(); ++i) {
+        long size = jacobsthalSequence[i];
+        if (startIndex >= cont_pairs.size()) {
+            break;
+        }
+        size_t endIndex = std::min(startIndex + size, cont_pairs.size());
+        std::vector<std::pair<long, long> > currentPartition(cont_pairs.begin() + startIndex, cont_pairs.begin() + endIndex);
+        splitedVectors.push_back(currentPartition);
+        startIndex = endIndex;
+    }
+    return splitedVectors;
+}
+
 void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
 
     //splitIntoPairsのbaseCaseの受け取り
@@ -144,6 +165,18 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
+    //
+    std::vector<std::vector<std::pair<long, long> > > partitionedVectors = splitPairsByJacobsthal(cont_pairs);
+    std::cout << "///partitionedVectors: " << cont_pairs.size() << std::endl;
+    for (size_t i = 0; i < partitionedVectors.size(); ++i) {
+        std::cout << "Partition " << i + 1 << ": ";
+        std::vector<std::pair<long, long> >::const_iterator it;
+        for (it = partitionedVectors[i].begin(); it != partitionedVectors[i].end(); ++it) {
+            std::cout << "(" << it->first << ", " << it->second << ") ";
+        }
+        std::cout << std::endl;
+    }
+
 
     size_t index = 0;
     size_t pos = 0;
@@ -253,3 +286,19 @@ bool PmergeMe::isSorted(const std::deque<long> &cont) {
     return true;
 }
 
+std::vector<long> PmergeMe::generateJacobsthalSequence(long n) {
+    std::vector<long> sequence;
+
+    if (n <= 0) {
+        return sequence;
+    }
+
+    long i = 1;
+    long nextValue = 0;
+    while (nextValue < n) {
+        nextValue = (std::pow(2, i + 1) + std::pow(-1, i)) / 3;
+        sequence.push_back(nextValue);
+        i++;
+    }
+    return sequence;
+}

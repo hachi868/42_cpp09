@@ -35,6 +35,7 @@ private:
 
     //vector
     std::vector<long> splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge);
+    std::vector<std::vector<std::pair<long, long> > > splitPairsByJacobsthal(const std::vector<std::pair<long, long> >& cont_pairs);
     void margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge);
     bool isSorted(const std::vector<long> &cont);
 
@@ -44,6 +45,8 @@ private:
     bool isSorted(const std::deque<long> &cont);
 
     static bool comparePairs(const std::pair<long, long>& a, const std::pair<long, long>& b);
+
+    std::vector<long> generateJacobsthalSequence(long n);
 };
 
 #endif //P_MERGE_ME_HPP
