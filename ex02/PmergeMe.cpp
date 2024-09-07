@@ -170,10 +170,13 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
-    //奇数があればpairの最後に送る。firstはpairのlastのfirst(つまり最大値)と同じにしておく。検索範囲を全体にするため。
+    //奇数があればpairの最後に送る。firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。検索範囲を全体にするため。
     if (cont_pairs[0].first < 0) {
-        cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
-
+        if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
+            cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+        } else {
+            cont_pairs[0].first = cont_merge[cont_merge.size()-1];
+        }
         std::pair<long, long> elResidue = cont_pairs.front();
         cont_pairs.erase(cont_pairs.begin());
         cont_pairs.push_back(elResidue);
