@@ -248,6 +248,7 @@ std::deque<long> PmergeMe::splitIntoPairs(std::deque<long> &cont, std::deque<lon
             cont_larger.push_back(first);
             cont_pairs.push_back(std::make_pair(first, second));
         } else {
+            //余りはfirstを-1にして格納しておく。ソートして頭に来るように。
             cont_pairs.push_back(std::make_pair(-1, cont[i]));
         }
     }
@@ -257,32 +258,84 @@ std::deque<long> PmergeMe::splitIntoPairs(std::deque<long> &cont, std::deque<lon
     return cont_larger;
 }
 
-void PmergeMe::margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge) {
-    if (cont_merge.size() == 0) {
-        if (cont_pairs[0].second > 0) {
-            cont_merge.push_back(cont_pairs[0].second);
+std::vector<std::deque<std::pair<long, long> > > PmergeMe::splitPairsByJacobsthal(const std::deque<std::pair<long, long> >& cont_pairs) {
+    std::vector<std::deque<std::pair<long, long> > > splitedVectors;
+
+    std::vector<long> jacobsthalSequence = generateJacobsthalSequence(cont_pairs.size());
+//    std::cout << "///generateJacobsthalSequence: (pair size" << cont_pairs.size() << ") ";
+//    printDebug(jacobsthalSequence);
+
+    size_t startIndex = 0;
+    for (size_t i = 0; i < jacobsthalSequence.size(); ++i) {
+        long size = jacobsthalSequence[i];
+        if (startIndex >= cont_pairs.size()) {
+            break;
         }
-        cont_merge.push_back(cont_pairs[0].first);
+        size_t endIndex = std::min(startIndex + size, cont_pairs.size());
+        std::deque<std::pair<long, long> > currentPartition(cont_pairs.begin() + startIndex, cont_pairs.begin() + endIndex);
+        splitedVectors.push_back(currentPartition);
+        startIndex = endIndex;
+    }
+    return splitedVectors;
+}
+
+void PmergeMe::margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge) {
+    //splitIntoPairsのbaseCaseの受け取り
+    if (cont_merge.size() == 0) {
+        cont_merge.push_back(cont_pairs[0].second);
+        if (cont_pairs[0].first > 0) {
+            cont_merge.push_back(cont_pairs[0].first);
+        }
         return;
     }
+
+    //pair sort
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
-
-    size_t index = 0;
-    size_t pos = 0;
-    for (std::deque<std::pair<long, long> >::iterator it = cont_pairs.begin(); it != cont_pairs.end(); ++it, ++index, ++pos) {
-        if (it->second < 0) {
-            continue;
-        }
-        if (index == 0) {
-            cont_merge.insert(cont_merge.begin(), it->second);
+    //奇数があればpairの最後に送る。firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。検索範囲を全体にするため。
+    if (cont_pairs[0].first < 0) {
+        if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
+            cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
         } else {
-            std::deque<long>::iterator it2 = std::lower_bound(cont_merge.begin(), cont_merge.begin()+pos, it->second);
-            cont_merge.insert(it2, it->second);
+            cont_pairs[0].first = cont_merge[cont_merge.size()-1];
         }
-        pos++;
+        std::pair<long, long> elResidue = cont_pairs.front();
+        cont_pairs.erase(cont_pairs.begin());
+        cont_pairs.push_back(elResidue);
     }
+    //
+    std::vector<std::deque<std::pair<long, long> > > splitedVectors = splitPairsByJacobsthal(cont_pairs);
+    for (size_t p = 0; p < splitedVectors.size(); ++p) {
+        const std::deque<std::pair<long, long> > &partition = splitedVectors[p];
+
+        size_t index = 0;
+        for (std::deque<std::pair<long, long> >::const_reverse_iterator it = partition.rbegin(); it != partition.rend(); ++it, ++index) {
+//            std::cout << "// " << it->second << "(L : " << it->first << ")" << std::endl;
+            std::deque<long>::iterator it_first = std::find(cont_merge.begin(), cont_merge.end(), it->first);
+            if (it_first != cont_merge.end()) {
+                // first の位置を基準にするための位置を決定
+                size_t pos = std::distance(cont_merge.begin(), it_first);
+
+                // second の挿入位置を見つける
+                if (pos <= cont_merge.size()) {
+                    // second の挿入位置を見つける
+                    std::deque<long>::iterator it_insert = std::lower_bound(cont_merge.begin(), cont_merge.begin() + pos, it->second);
+                    cont_merge.insert(it_insert, it->second);
+                } else {
+                    std::cout << "Invalid position: " << pos << std::endl;
+                }
+            } else {
+                std::cout << it->first << " not found in cont_merge" << std::endl;
+            }
+        }
+    }
+//    std::cout << "///margeSort: " << std::endl;
+//    std::cout << "cont_merge: ";
+//    printDebug(cont_merge);
+//    std::cout << "cont_pairs: " << std::endl;
+//    printDebugPair(cont_pairs);
+//    std::cout << "----- ***margeSort//" << std::endl << std::endl;
 }
 
 bool PmergeMe::isSorted(const std::deque<long> &cont) {

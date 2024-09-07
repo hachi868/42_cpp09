@@ -41,6 +41,7 @@ private:
 
     //deque
     std::deque<long> splitIntoPairs(std::deque<long> &cont, std::deque<long> &cont_merge);
+    std::vector<std::deque<std::pair<long, long> > > splitPairsByJacobsthal(const std::deque<std::pair<long, long> >& cont_pairs);
     void margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge);
     bool isSorted(const std::deque<long> &cont);
 
