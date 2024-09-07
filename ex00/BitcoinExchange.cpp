@@ -50,13 +50,13 @@ std::map<std::string, double>::iterator BitcoinExchange::getRefData(const std::s
 
 void BitcoinExchange::putValue(std::string &date, double &exchangeRateDouble) {
     std::map<std::string, double>::iterator it = getRefData(date);
-    //std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << "///" << date << ":" << exchangeRateDouble << std::endl;
-    std::cout << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << std::endl;
+    //std::cout << "///ref::" << it->first << " => " << it->second << " = " << it->second * exchangeRateDouble << "///input::" << date << ":" << exchangeRateDouble << std::endl;
+    std::cout << date << " => " << exchangeRateDouble << " = " << it->second * exchangeRateDouble << std::endl;
 }
 
 void BitcoinExchange::putValue(std::string &date, unsigned int &exchangeRateInt) {
     std::map<std::string, double>::iterator it = getRefData(date);
-    //std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << "///" << it->first << ":" << it->second << std::endl;
+    //std::cout << "///ref::" << it->first << " => " << it->second << " = " << it->second * exchangeRateInt << "///input::" << date << ":" << exchangeRateInt << std::endl;
     std::cout << date << " => " << exchangeRateInt << " = " << it->second * exchangeRateInt << std::endl;
 }
 
