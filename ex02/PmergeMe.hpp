@@ -36,13 +36,13 @@ private:
     //vector
     std::vector<long> splitIntoPairs(std::vector<long> &cont, std::vector<long> &cont_merge);
     std::vector<std::vector<std::pair<long, long> > > splitPairsByJacobsthal(const std::vector<std::pair<long, long> >& cont_pairs);
-    void margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge);
+    void mergeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge);
     bool isSorted(const std::vector<long> &cont);
 
     //deque
     std::deque<long> splitIntoPairs(std::deque<long> &cont, std::deque<long> &cont_merge);
     std::vector<std::deque<std::pair<long, long> > > splitPairsByJacobsthal(const std::deque<std::pair<long, long> >& cont_pairs);
-    void margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge);
+    void mergeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge);
     bool isSorted(const std::deque<long> &cont);
 
     static bool comparePairs(const std::pair<long, long>& a, const std::pair<long, long>& b);

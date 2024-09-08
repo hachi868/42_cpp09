@@ -125,7 +125,7 @@ std::vector<long> PmergeMe::splitIntoPairs(std::vector<long> &cont, std::vector<
     }
 
     splitIntoPairs(cont_larger, cont_merge);
-    margeSort(cont_pairs, cont_merge);
+    mergeSort(cont_pairs, cont_merge);
     return cont_larger;
 }
 
@@ -150,7 +150,7 @@ std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsth
     return splitedVectors;
 }
 
-void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
+void PmergeMe::mergeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
         cont_merge.push_back(cont_pairs[0].second);
@@ -201,12 +201,12 @@ void PmergeMe::margeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
             }
         }
     }
-//    std::cout << "///margeSort: " << std::endl;
+//    std::cout << "///mergeSort: " << std::endl;
 //    std::cout << "cont_merge: ";
 //    printDebug(cont_merge);
 //    std::cout << "cont_pairs: " << std::endl;
 //    printDebugPair(cont_pairs);
-//    std::cout << "----- ***margeSort//" << std::endl << std::endl;
+//    std::cout << "----- ***mergeSort//" << std::endl << std::endl;
 }
 
 bool PmergeMe::isSorted(const std::vector<long> &cont) {
@@ -248,7 +248,7 @@ std::deque<long> PmergeMe::splitIntoPairs(std::deque<long> &cont, std::deque<lon
     }
 
     splitIntoPairs(cont_larger, cont_merge);
-    margeSort(cont_pairs, cont_merge);
+    mergeSort(cont_pairs, cont_merge);
     return cont_larger;
 }
 
@@ -273,7 +273,7 @@ std::vector<std::deque<std::pair<long, long> > > PmergeMe::splitPairsByJacobstha
     return splitedVectors;
 }
 
-void PmergeMe::margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge) {
+void PmergeMe::mergeSort(std::deque<std::pair<long, long> > &cont_pairs, std::deque<long> &cont_merge) {
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
         cont_merge.push_back(cont_pairs[0].second);
@@ -324,12 +324,12 @@ void PmergeMe::margeSort(std::deque<std::pair<long, long> > &cont_pairs, std::de
             }
         }
     }
-//    std::cout << "///margeSort: " << std::endl;
+//    std::cout << "///mergeSort: " << std::endl;
 //    std::cout << "cont_merge: ";
 //    printDebug(cont_merge);
 //    std::cout << "cont_pairs: " << std::endl;
 //    printDebugPair(cont_pairs);
-//    std::cout << "----- ***margeSort//" << std::endl << std::endl;
+//    std::cout << "----- ***mergeSort//" << std::endl << std::endl;
 }
 
 bool PmergeMe::isSorted(const std::deque<long> &cont) {
