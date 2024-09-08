@@ -151,11 +151,28 @@ std::vector<std::vector<std::pair<long, long> > > PmergeMe::splitPairsByJacobsth
 }
 
 void PmergeMe::mergeSort(std::vector<std::pair<long, long> > &cont_pairs, std::vector<long> &cont_merge) {
+//    std::cout << "margeSort pair:";
+//    std::vector<std::pair<long, long> >::const_iterator it;
+//    for (it = cont_pairs.begin(); it != cont_pairs.end(); ++it) {
+//        std::cout << "(" << it->first << ", " << it->second << ") ";
+//    }
+//    std::cout << std::endl;
+//
+//    std::cout << "cont_merge: ";
+//    for (size_t i = 0; i < cont_merge.size(); ++i) {
+//        std::cout << cont_merge[i] << " ";
+//    }
+//    std::cout << std::endl;
+
     //splitIntoPairsのbaseCaseの受け取り
     if (cont_merge.size() == 0) {
         cont_merge.push_back(cont_pairs[0].second);
         if (cont_pairs[0].first > 0) {
             cont_merge.push_back(cont_pairs[0].first);
+        }
+        //奇数の余りがある場合(splitIntoPairsでcont.size()=1の場合、pairに奇数の余りが入る場合がある)
+        if (cont_pairs.size() > 1) {
+            cont_merge.push_back(cont_pairs[1].second);
         }
         return;
     }
@@ -286,6 +303,10 @@ void PmergeMe::mergeSort(std::deque<std::pair<long, long> > &cont_pairs, std::de
         cont_merge.push_back(cont_pairs[0].second);
         if (cont_pairs[0].first > 0) {
             cont_merge.push_back(cont_pairs[0].first);
+        }
+        //奇数の余りがある場合(splitIntoPairsでcont.size()=1の場合、pairに奇数の余りが入る場合がある)
+        if (cont_pairs.size() > 1) {
+            cont_merge.push_back(cont_pairs[1].second);
         }
         return;
     }
