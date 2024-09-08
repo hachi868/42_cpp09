@@ -201,10 +201,10 @@ void PmergeMe::mergeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
                     std::vector<long>::iterator it_insert = std::lower_bound(cont_merge.begin(), cont_merge.begin() + pos, it->second);
                     cont_merge.insert(it_insert, it->second);
                 } else {
-                    std::cout << "Invalid position: " << pos << std::endl;
+                    throw std::runtime_error("Invalid position(vec)");
                 }
             } else {
-                std::cout << it->first << " not found in cont_merge" << std::endl;
+                throw std::runtime_error("large num is not found in cont_merge(vec)");
             }
         }
     }
@@ -331,10 +331,10 @@ void PmergeMe::mergeSort(std::deque<std::pair<long, long> > &cont_pairs, std::de
                     std::deque<long>::iterator it_insert = std::lower_bound(cont_merge.begin(), cont_merge.begin() + pos, it->second);
                     cont_merge.insert(it_insert, it->second);
                 } else {
-                    std::cout << "Invalid position: " << pos << std::endl;
+                    throw std::runtime_error("Invalid position(deque)");
                 }
             } else {
-                std::cout << it->first << " not found in cont_merge" << std::endl;
+                throw std::runtime_error("large num is not found in cont_merge(deque)");
             }
         }
     }
