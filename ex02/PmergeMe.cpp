@@ -74,11 +74,11 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
     cont_vec_ = cont_merge;
-    //std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
-//    for (size_t i = 0; i < cont_vec_.size(); ++i) {
-//        std::cout << cont_vec_[i] << " ";
-//    }
-//    std::cout << std::endl;
+    std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
+    for (size_t i = 0; i < cont_vec_.size(); ++i) {
+        std::cout << cont_vec_[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 void PmergeMe::runSortDeque() {
@@ -86,11 +86,11 @@ void PmergeMe::runSortDeque() {
 
     splitIntoPairs(cont_deque_, cont_merge);
     cont_deque_ = cont_merge;
-    //std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
-//    for (size_t i = 0; i < cont_deque_.size(); ++i) {
-//        std::cout << cont_deque_[i] << " ";
-//    }
-//    std::cout << std::endl;
+    std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
+    for (size_t i = 0; i < cont_deque_.size(); ++i) {
+        std::cout << cont_deque_[i] << " ";
+    }
+    std::cout << std::endl;
 }
 
 
@@ -164,25 +164,32 @@ void PmergeMe::mergeSort(std::vector<std::pair<long, long> > &cont_pairs, std::v
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
-    //奇数があればpairの最後に送る。firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。検索範囲を全体にするため。
+    // ソート対象が奇数ならpairの最後に送る。
+    // firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。
+    // 検索範囲を全体にするため。
     if (cont_pairs[0].first < 0) {
-        if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
-            cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+        if (cont_merge[cont_merge.size()-1] < cont_pairs[0].second && cont_pairs[cont_pairs.size()-1].first < cont_pairs[0].second) {
+            // pairのlastのfirstとcont_mergeの最後より自分が大きければ最大値.cont_mergeの最後にmerge
+            cont_merge.push_back(cont_pairs[0].second);
+            cont_pairs.erase(cont_pairs.begin());
         } else {
-            cont_pairs[0].first = cont_merge[cont_merge.size()-1];
+            if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
+                cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+            } else {
+                cont_pairs[0].first = cont_merge[cont_merge.size()-1];
+            }
+            std::pair<long, long> elResidue = cont_pairs.front();
+            cont_pairs.erase(cont_pairs.begin());
+            cont_pairs.push_back(elResidue);
         }
-        std::pair<long, long> elResidue = cont_pairs.front();
-        cont_pairs.erase(cont_pairs.begin());
-        cont_pairs.push_back(elResidue);
     }
-    //
     std::vector<std::vector<std::pair<long, long> > > splitedVectors = splitPairsByJacobsthal(cont_pairs);
     for (size_t p = 0; p < splitedVectors.size(); ++p) {
         const std::vector<std::pair<long, long> > &partition = splitedVectors[p];
 
         size_t index = 0;
         for (std::vector<std::pair<long, long> >::const_reverse_iterator it = partition.rbegin(); it != partition.rend(); ++it, ++index) {
-//            std::cout << "// " << it->second << "(L : " << it->first << ")" << std::endl;
+            //std::cout << "// " << it->second << "(L : " << it->first << ")" << std::endl;
             std::vector<long>::iterator it_first = std::find(cont_merge.begin(), cont_merge.end(), it->first);
             if (it_first != cont_merge.end()) {
                 // first の位置を基準にするための位置を決定
@@ -287,18 +294,25 @@ void PmergeMe::mergeSort(std::deque<std::pair<long, long> > &cont_pairs, std::de
     if (cont_pairs.size() > 1) {
         std::sort(cont_pairs.begin(), cont_pairs.end(), PmergeMe::comparePairs);
     }
-    //奇数があればpairの最後に送る。firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。検索範囲を全体にするため。
+    // ソート対象が奇数ならpairの最後に送る。
+    // firstはpairのlastのfirstとcont_mergeの最後で大きい方(つまり最大値)と同じにしておく。
+    // 検索範囲を全体にするため。
     if (cont_pairs[0].first < 0) {
-        if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
-            cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+        if (cont_merge[cont_merge.size()-1] < cont_pairs[0].second && cont_pairs[cont_pairs.size()-1].first < cont_pairs[0].second) {
+            // pairのlastのfirstとcont_mergeの最後より自分が大きければ最大値.cont_mergeの最後にmerge
+            cont_merge.push_back(cont_pairs[0].second);
+            cont_pairs.erase(cont_pairs.begin());
         } else {
-            cont_pairs[0].first = cont_merge[cont_merge.size()-1];
+            if (cont_merge[cont_merge.size()-1] < cont_pairs[cont_pairs.size()-1].first) {
+                cont_pairs[0].first = cont_pairs[cont_pairs.size()-1].first;
+            } else {
+                cont_pairs[0].first = cont_merge[cont_merge.size()-1];
+            }
+            std::pair<long, long> elResidue = cont_pairs.front();
+            cont_pairs.erase(cont_pairs.begin());
+            cont_pairs.push_back(elResidue);
         }
-        std::pair<long, long> elResidue = cont_pairs.front();
-        cont_pairs.erase(cont_pairs.begin());
-        cont_pairs.push_back(elResidue);
     }
-    //
     std::vector<std::deque<std::pair<long, long> > > splitedVectors = splitPairsByJacobsthal(cont_pairs);
     for (size_t p = 0; p < splitedVectors.size(); ++p) {
         const std::deque<std::pair<long, long> > &partition = splitedVectors[p];
