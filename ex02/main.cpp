@@ -15,6 +15,8 @@ static void destructor() {
 // ./PmergeMe 56 5 908 3
 // ./PmergeMe 3 500 100 790
 // ./PmergeMe 3 500 100 790 6 9 38 806 577
+// ./PmergeMe 8 9 2 21 15 20 3 7 1 6 11 17 4 19 16 10 13 18 5 12 22 23 14
+// ./PmergeMe 8 9 2 21 15 20 3 7 1 6 11 17 4 19 16 10 13 18 5 12 22 23 14 8
 
 //invalid arg
 // ./PmergeMe

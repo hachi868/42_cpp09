@@ -74,11 +74,11 @@ void PmergeMe::runSortVec() {
 
     splitIntoPairs(cont_vec_, cont_merge);
     cont_vec_ = cont_merge;
-    std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
-    for (size_t i = 0; i < cont_vec_.size(); ++i) {
-        std::cout << cont_vec_[i] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "runSortVec: isSorted: " << isSorted(cont_vec_) << std::endl;
+//    for (size_t i = 0; i < cont_vec_.size(); ++i) {
+//        std::cout << cont_vec_[i] << " ";
+//    }
+//    std::cout << std::endl;
 }
 
 void PmergeMe::runSortDeque() {
@@ -86,11 +86,11 @@ void PmergeMe::runSortDeque() {
 
     splitIntoPairs(cont_deque_, cont_merge);
     cont_deque_ = cont_merge;
-    std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
-    for (size_t i = 0; i < cont_deque_.size(); ++i) {
-        std::cout << cont_deque_[i] << " ";
-    }
-    std::cout << std::endl;
+//    std::cout << "runSortDeque: isSorted: " << isSorted(cont_deque_) << std::endl;
+//    for (size_t i = 0; i < cont_deque_.size(); ++i) {
+//        std::cout << cont_deque_[i] << " ";
+//    }
+//    std::cout << std::endl;
 }
 
 
