@@ -33,12 +33,12 @@ void PmergeMe::parser(std::string arg) {
         throw std::runtime_error("Invalid args. (negative number)");
     }
     std::stringstream argStream(arg);
-    long uIntArg;
-    if (!(argStream >> uIntArg) || !argStream.eof()) {
+    long longArg;
+    if (!(argStream >> longArg) || !argStream.eof()) {
         throw std::runtime_error("Invalid args. (cannot convert long)");
     }
-    cont_vec_.push_back(uIntArg);
-    cont_deque_.push_back(uIntArg);
+    cont_vec_.push_back(longArg);
+    cont_deque_.push_back(longArg);
 }
 
 void PmergeMe::printContainers(std::string prefix) const {
